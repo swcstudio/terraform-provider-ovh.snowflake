@@ -1,0 +1,8 @@
+ovh_endpoint           = "ovh-eu"
+ovh_application_key    = "your-ovh-application-key"
+ovh_application_secret = "your-ovh-application-secret"
+ovh_consumer_key       = "your-ovh-consumer-key"
+snowflake_account      = "your-snowflake-account"
+snowflake_username     = "your-snowflake-username"
+snowflake_password     = "your-snowflake-password"
+user_password          = "secure-user-password"
