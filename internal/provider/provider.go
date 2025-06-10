@@ -3,7 +3,7 @@ package provider
 import (
 	"context"
 	"database/sql"
-	"fmt"
+
 	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
