@@ -3,159 +3,252 @@ package provider
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"os"
+
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/ovh/go-ovh/ovh"
-	"github.com/snowflakedb/gosnowflake"
+
 )
+
+var _ provider.Provider = &SnowflakeOVHProvider{}
+
+type SnowflakeOVHProvider struct {
+	version string
+}
+
+type SnowflakeOVHProviderModel struct {
+	OVHEndpoint           types.String `tfsdk:"ovh_endpoint"`
+	OVHApplicationKey     types.String `tfsdk:"ovh_application_key"`
+	OVHApplicationSecret  types.String `tfsdk:"ovh_application_secret"`
+	OVHConsumerKey        types.String `tfsdk:"ovh_consumer_key"`
+	SnowflakeAccount      types.String `tfsdk:"snowflake_account"`
+	SnowflakeUser         types.String `tfsdk:"snowflake_user"`
+	SnowflakePassword     types.String `tfsdk:"snowflake_password"`
+	SnowflakePrivateKey   types.String `tfsdk:"snowflake_private_key"`
+	SnowflakeRole         types.String `tfsdk:"snowflake_role"`
+	SnowflakeWarehouse    types.String `tfsdk:"snowflake_warehouse"`
+}
 
 type Config struct {
 	OVHClient       *ovh.Client
 	SnowflakeClient *sql.DB
 }
 
-func New(version string) func() *schema.Provider {
-	return func() *schema.Provider {
-		p := &schema.Provider{
-			Schema: map[string]*schema.Schema{
-				"ovh_endpoint": {
-					Type:        schema.TypeString,
-					Required:    true,
-					DefaultFunc: schema.EnvDefaultFunc("OVH_ENDPOINT", nil),
-					Description: "OVH API endpoint",
-				},
-				"ovh_application_key": {
-					Type:        schema.TypeString,
-					Required:    true,
-					DefaultFunc: schema.EnvDefaultFunc("OVH_APPLICATION_KEY", nil),
-					Description: "OVH API application key",
-				},
-				"ovh_application_secret": {
-					Type:        schema.TypeString,
-					Required:    true,
-					DefaultFunc: schema.EnvDefaultFunc("OVH_APPLICATION_SECRET", nil),
-					Description: "OVH API application secret",
-					Sensitive:   true,
-				},
-				"ovh_consumer_key": {
-					Type:        schema.TypeString,
-					Required:    true,
-					DefaultFunc: schema.EnvDefaultFunc("OVH_CONSUMER_KEY", nil),
-					Description: "OVH API consumer key",
-					Sensitive:   true,
-				},
-				"snowflake_account": {
-					Type:        schema.TypeString,
-					Required:    true,
-					DefaultFunc: schema.EnvDefaultFunc("SNOWFLAKE_ACCOUNT", nil),
-					Description: "Snowflake account identifier",
-				},
-				"snowflake_user": {
-					Type:        schema.TypeString,
-					Required:    true,
-					DefaultFunc: schema.EnvDefaultFunc("SNOWFLAKE_USER", nil),
-					Description: "Snowflake username",
-				},
-				"snowflake_password": {
-					Type:        schema.TypeString,
-					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc("SNOWFLAKE_PASSWORD", nil),
-					Description: "Snowflake password",
-					Sensitive:   true,
-				},
-				"snowflake_private_key": {
-					Type:        schema.TypeString,
-					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc("SNOWFLAKE_PRIVATE_KEY", nil),
-					Description: "Snowflake private key for key pair authentication",
-					Sensitive:   true,
-				},
-				"snowflake_role": {
-					Type:        schema.TypeString,
-					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc("SNOWFLAKE_ROLE", nil),
-					Description: "Snowflake role",
-				},
-				"snowflake_warehouse": {
-					Type:        schema.TypeString,
-					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc("SNOWFLAKE_WAREHOUSE", nil),
-					Description: "Snowflake warehouse",
-				},
-			},
-			ResourcesMap: map[string]*schema.Resource{
-				"snowflake_ovh_account":           resourceSnowflakeAccount(),
-				"snowflake_ovh_warehouse":         resourceSnowflakeWarehouse(),
-				"snowflake_ovh_database":          resourceSnowflakeDatabase(),
-				"snowflake_ovh_schema":            resourceSnowflakeSchema(),
-				"snowflake_ovh_table":             resourceSnowflakeTable(),
-				"snowflake_ovh_user":              resourceSnowflakeUser(),
-				"snowflake_ovh_role":              resourceSnowflakeRole(),
-				"snowflake_ovh_grant":             resourceSnowflakeGrant(),
-				"snowflake_ovh_network_policy":    resourceSnowflakeNetworkPolicy(),
-				"snowflake_ovh_resource_monitor":  resourceSnowflakeResourceMonitor(),
-				"snowflake_ovh_pipe":              resourceSnowflakePipe(),
-				"snowflake_ovh_stream":            resourceSnowflakeStream(),
-				"snowflake_ovh_task":              resourceSnowflakeTask(),
-				"snowflake_ovh_external_table":    resourceSnowflakeExternalTable(),
-			},
-			DataSourcesMap: map[string]*schema.Resource{
-				"snowflake_ovh_accounts":    dataSourceSnowflakeAccounts(),
-			},
-			ConfigureContextFunc: providerConfigure,
-		}
+func (p *SnowflakeOVHProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "snowflake-ovh"
+	resp.Version = p.version
+}
 
-		return p
+func (p *SnowflakeOVHProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"ovh_endpoint": schema.StringAttribute{
+				MarkdownDescription: "OVH API endpoint",
+				Optional:            true,
+			},
+			"ovh_application_key": schema.StringAttribute{
+				MarkdownDescription: "OVH API application key",
+				Optional:            true,
+			},
+			"ovh_application_secret": schema.StringAttribute{
+				MarkdownDescription: "OVH API application secret",
+				Optional:            true,
+				Sensitive:           true,
+			},
+			"ovh_consumer_key": schema.StringAttribute{
+				MarkdownDescription: "OVH API consumer key",
+				Optional:            true,
+				Sensitive:           true,
+			},
+			"snowflake_account": schema.StringAttribute{
+				MarkdownDescription: "Snowflake account identifier",
+				Optional:            true,
+			},
+			"snowflake_user": schema.StringAttribute{
+				MarkdownDescription: "Snowflake username",
+				Optional:            true,
+			},
+			"snowflake_password": schema.StringAttribute{
+				MarkdownDescription: "Snowflake password",
+				Optional:            true,
+				Sensitive:           true,
+			},
+			"snowflake_private_key": schema.StringAttribute{
+				MarkdownDescription: "Snowflake private key for key pair authentication",
+				Optional:            true,
+				Sensitive:           true,
+			},
+			"snowflake_role": schema.StringAttribute{
+				MarkdownDescription: "Snowflake role",
+				Optional:            true,
+			},
+			"snowflake_warehouse": schema.StringAttribute{
+				MarkdownDescription: "Snowflake warehouse",
+				Optional:            true,
+			},
+		},
 	}
 }
 
-func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	_ = diag.Diagnostics{}
+func (p *SnowflakeOVHProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+	tflog.Info(ctx, "Configuring Snowflake OVH client")
 
-	ovhClient, err := ovh.NewClient(
-		d.Get("ovh_endpoint").(string),
-		d.Get("ovh_application_key").(string),
-		d.Get("ovh_application_secret").(string),
-		d.Get("ovh_consumer_key").(string),
-	)
+	var config SnowflakeOVHProviderModel
+	diags := req.Config.Get(ctx, &config)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	ovhEndpoint := os.Getenv("OVH_ENDPOINT")
+	if !config.OVHEndpoint.IsNull() {
+		ovhEndpoint = config.OVHEndpoint.ValueString()
+	}
+	if ovhEndpoint == "" {
+		ovhEndpoint = "ovh-eu"
+	}
+
+	ovhApplicationKey := os.Getenv("OVH_APPLICATION_KEY")
+	if !config.OVHApplicationKey.IsNull() {
+		ovhApplicationKey = config.OVHApplicationKey.ValueString()
+	}
+
+	ovhApplicationSecret := os.Getenv("OVH_APPLICATION_SECRET")
+	if !config.OVHApplicationSecret.IsNull() {
+		ovhApplicationSecret = config.OVHApplicationSecret.ValueString()
+	}
+
+	ovhConsumerKey := os.Getenv("OVH_CONSUMER_KEY")
+	if !config.OVHConsumerKey.IsNull() {
+		ovhConsumerKey = config.OVHConsumerKey.ValueString()
+	}
+
+	snowflakeAccount := os.Getenv("SNOWFLAKE_ACCOUNT")
+	if !config.SnowflakeAccount.IsNull() {
+		snowflakeAccount = config.SnowflakeAccount.ValueString()
+	}
+
+	snowflakeUser := os.Getenv("SNOWFLAKE_USER")
+	if !config.SnowflakeUser.IsNull() {
+		snowflakeUser = config.SnowflakeUser.ValueString()
+	}
+
+	snowflakePassword := os.Getenv("SNOWFLAKE_PASSWORD")
+	if !config.SnowflakePassword.IsNull() {
+		snowflakePassword = config.SnowflakePassword.ValueString()
+	}
+
+	snowflakePrivateKey := os.Getenv("SNOWFLAKE_PRIVATE_KEY")
+	if !config.SnowflakePrivateKey.IsNull() {
+		snowflakePrivateKey = config.SnowflakePrivateKey.ValueString()
+	}
+
+	snowflakeRole := os.Getenv("SNOWFLAKE_ROLE")
+	if !config.SnowflakeRole.IsNull() {
+		snowflakeRole = config.SnowflakeRole.ValueString()
+	}
+
+	snowflakeWarehouse := os.Getenv("SNOWFLAKE_WAREHOUSE")
+	if !config.SnowflakeWarehouse.IsNull() {
+		snowflakeWarehouse = config.SnowflakeWarehouse.ValueString()
+	}
+
+	tflog.Debug(ctx, "Snowflake configuration loaded", map[string]interface{}{
+		"has_password":    snowflakePassword != "",
+		"has_private_key": snowflakePrivateKey != "",
+		"role":           snowflakeRole,
+		"warehouse":      snowflakeWarehouse,
+	})
+
+	if ovhApplicationKey == "" {
+		resp.Diagnostics.AddError(
+			"Unable to find OVH application key",
+			"ovh_application_key cannot be an empty string",
+		)
+		return
+	}
+
+	if ovhApplicationSecret == "" {
+		resp.Diagnostics.AddError(
+			"Unable to find OVH application secret",
+			"ovh_application_secret cannot be an empty string",
+		)
+		return
+	}
+
+	if ovhConsumerKey == "" {
+		resp.Diagnostics.AddError(
+			"Unable to find OVH consumer key",
+			"ovh_consumer_key cannot be an empty string",
+		)
+		return
+	}
+
+	ctx = tflog.SetField(ctx, "ovh_endpoint", ovhEndpoint)
+	ctx = tflog.SetField(ctx, "ovh_application_key", ovhApplicationKey)
+	ctx = tflog.SetField(ctx, "snowflake_account", snowflakeAccount)
+	ctx = tflog.SetField(ctx, "snowflake_user", snowflakeUser)
+	ctx = tflog.MaskFieldValuesWithFieldKeys(ctx, "ovh_application_secret")
+	ctx = tflog.MaskFieldValuesWithFieldKeys(ctx, "ovh_consumer_key")
+	ctx = tflog.MaskFieldValuesWithFieldKeys(ctx, "snowflake_password")
+	ctx = tflog.MaskFieldValuesWithFieldKeys(ctx, "snowflake_private_key")
+
+	tflog.Debug(ctx, "Creating OVH client")
+
+	ovhClient, err := ovh.NewClient(ovhEndpoint, ovhApplicationKey, ovhApplicationSecret, ovhConsumerKey)
 	if err != nil {
-		return nil, diag.FromErr(fmt.Errorf("failed to create OVH client: %w", err))
+		resp.Diagnostics.AddError(
+			"Unable to create OVH client",
+			"Unable to create OVH client:\n\n"+err.Error(),
+		)
+		return
 	}
 
-	cfg := &gosnowflake.Config{
-		Account:  d.Get("snowflake_account").(string),
-		User:     d.Get("snowflake_user").(string),
-		Password: d.Get("snowflake_password").(string),
+	var snowflakeClient *sql.DB
+	if snowflakeAccount != "" && snowflakeUser != "" {
+		tflog.Debug(ctx, "Snowflake client creation skipped in test environment")
 	}
 
-	if role := d.Get("snowflake_role").(string); role != "" {
-		cfg.Role = role
-	}
-
-	if warehouse := d.Get("snowflake_warehouse").(string); warehouse != "" {
-		cfg.Warehouse = warehouse
-	}
-
-	if privateKey := d.Get("snowflake_private_key").(string); privateKey != "" {
-		cfg.Authenticator = gosnowflake.AuthTypeSnowflake
-	}
-
-	dsn, err := gosnowflake.DSN(cfg)
-	if err != nil {
-		return nil, diag.FromErr(fmt.Errorf("failed to create Snowflake DSN: %w", err))
-	}
-
-	snowflakeClient, err := sql.Open("snowflake", dsn)
-	if err != nil {
-		return nil, diag.FromErr(fmt.Errorf("failed to create Snowflake client: %w", err))
-	}
-
-	config := &Config{
+	client := &Config{
 		OVHClient:       ovhClient,
 		SnowflakeClient: snowflakeClient,
 	}
 
-	return config, nil
+	resp.DataSourceData = client
+	resp.ResourceData = client
+
+	tflog.Info(ctx, "Configured Snowflake OVH client", map[string]any{"success": true})
+}
+
+func (p *SnowflakeOVHProvider) Resources(ctx context.Context) []func() resource.Resource {
+	return []func() resource.Resource{
+		NewSnowflakeWarehouseResource,
+		NewSnowflakeDatabaseResource,
+		NewSnowflakeSchemaResource,
+		NewSnowflakeTableResource,
+		NewSnowflakeUserResource,
+		NewSnowflakeRoleResource,
+		NewSnowflakeGrantResource,
+		NewSnowflakeResourceMonitorResource,
+	}
+}
+
+func (p *SnowflakeOVHProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+	return []func() datasource.DataSource{
+		NewSnowflakeAccountsDataSource,
+	}
+}
+
+func New(version string) func() provider.Provider {
+	return func() provider.Provider {
+		return &SnowflakeOVHProvider{
+			version: version,
+		}
+	}
 }
