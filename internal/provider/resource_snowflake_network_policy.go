@@ -63,10 +63,10 @@ func resourceSnowflakeNetworkPolicyCreate(ctx context.Context, d *schema.Resourc
 	_ = diag.Diagnostics{}
 
 	policyConfig := map[string]interface{}{
-		"name":           d.Get("name").(string),
-		"allowedIpList":  d.Get("allowed_ip_list").([]interface{}),
-		"blockedIpList":  d.Get("blocked_ip_list").([]interface{}),
-		"comment":        d.Get("comment").(string),
+		"name":          d.Get("name").(string),
+		"allowedIpList": d.Get("allowed_ip_list").([]interface{}),
+		"blockedIpList": d.Get("blocked_ip_list").([]interface{}),
+		"comment":       d.Get("comment").(string),
 	}
 
 	var result map[string]interface{}

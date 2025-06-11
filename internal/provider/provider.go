@@ -13,7 +13,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/ovh/go-ovh/ovh"
-
 )
 
 var _ provider.Provider = &SnowflakeOVHProvider{}
@@ -23,16 +22,16 @@ type SnowflakeOVHProvider struct {
 }
 
 type SnowflakeOVHProviderModel struct {
-	OVHEndpoint           types.String `tfsdk:"ovh_endpoint"`
-	OVHApplicationKey     types.String `tfsdk:"ovh_application_key"`
-	OVHApplicationSecret  types.String `tfsdk:"ovh_application_secret"`
-	OVHConsumerKey        types.String `tfsdk:"ovh_consumer_key"`
-	SnowflakeAccount      types.String `tfsdk:"snowflake_account"`
-	SnowflakeUser         types.String `tfsdk:"snowflake_user"`
-	SnowflakePassword     types.String `tfsdk:"snowflake_password"`
-	SnowflakePrivateKey   types.String `tfsdk:"snowflake_private_key"`
-	SnowflakeRole         types.String `tfsdk:"snowflake_role"`
-	SnowflakeWarehouse    types.String `tfsdk:"snowflake_warehouse"`
+	OVHEndpoint          types.String `tfsdk:"ovh_endpoint"`
+	OVHApplicationKey    types.String `tfsdk:"ovh_application_key"`
+	OVHApplicationSecret types.String `tfsdk:"ovh_application_secret"`
+	OVHConsumerKey       types.String `tfsdk:"ovh_consumer_key"`
+	SnowflakeAccount     types.String `tfsdk:"snowflake_account"`
+	SnowflakeUser        types.String `tfsdk:"snowflake_user"`
+	SnowflakePassword    types.String `tfsdk:"snowflake_password"`
+	SnowflakePrivateKey  types.String `tfsdk:"snowflake_private_key"`
+	SnowflakeRole        types.String `tfsdk:"snowflake_role"`
+	SnowflakeWarehouse   types.String `tfsdk:"snowflake_warehouse"`
 }
 
 type Config struct {
@@ -162,8 +161,8 @@ func (p *SnowflakeOVHProvider) Configure(ctx context.Context, req provider.Confi
 	tflog.Debug(ctx, "Snowflake configuration loaded", map[string]interface{}{
 		"has_password":    snowflakePassword != "",
 		"has_private_key": snowflakePrivateKey != "",
-		"role":           snowflakeRole,
-		"warehouse":      snowflakeWarehouse,
+		"role":            snowflakeRole,
+		"warehouse":       snowflakeWarehouse,
 	})
 
 	if ovhApplicationKey == "" {

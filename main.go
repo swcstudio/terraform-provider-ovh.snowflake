@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
-	"github.com/spectrumwebco/terraform-provider-snowflake-ovh/internal/provider"
+	"github.com/swcstudio/terraform-provider-snowflake-ovh/internal/provider"
 )
 
 var (
@@ -21,7 +21,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/spectrumwebco/snowflake-ovh",
+		Address: "registry.terraform.io/swcstudio/snowflake-ovh",
 		Debug:   debug,
 	}
 

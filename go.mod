@@ -1,4 +1,4 @@
-module github.com/spectrumwebco/terraform-provider-snowflake-ovh
+module github.com/swcstudio/terraform-provider-snowflake-ovh
 
 go 1.23.0
 

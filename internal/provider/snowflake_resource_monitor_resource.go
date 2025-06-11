@@ -21,13 +21,13 @@ type SnowflakeResourceMonitorResource struct {
 }
 
 type SnowflakeResourceMonitorResourceModel struct {
-	ID           types.String `tfsdk:"id"`
-	Name         types.String `tfsdk:"name"`
-	CreditQuota  types.Int64  `tfsdk:"credit_quota"`
-	Frequency    types.String `tfsdk:"frequency"`
-	StartTime    types.String `tfsdk:"start_time"`
-	EndTime      types.String `tfsdk:"end_time"`
-	SuspendAt    types.Int64  `tfsdk:"suspend_at"`
+	ID                   types.String `tfsdk:"id"`
+	Name                 types.String `tfsdk:"name"`
+	CreditQuota          types.Int64  `tfsdk:"credit_quota"`
+	Frequency            types.String `tfsdk:"frequency"`
+	StartTime            types.String `tfsdk:"start_time"`
+	EndTime              types.String `tfsdk:"end_time"`
+	SuspendAt            types.Int64  `tfsdk:"suspend_at"`
 	SuspendImmediatelyAt types.Int64  `tfsdk:"suspend_immediately_at"`
 }
 

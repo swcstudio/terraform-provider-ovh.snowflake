@@ -126,18 +126,18 @@ func resourceSnowflakeTaskCreate(ctx context.Context, d *schema.ResourceData, me
 	_ = diag.Diagnostics{}
 
 	taskConfig := map[string]interface{}{
-		"name":               d.Get("name").(string),
-		"database":           d.Get("database").(string),
-		"schema":             d.Get("schema").(string),
-		"sqlStatement":       d.Get("sql_statement").(string),
-		"warehouse":          d.Get("warehouse").(string),
-		"schedule":           d.Get("schedule").(string),
-		"sessionParameters":  d.Get("session_parameters"),
-		"userTaskTimeoutMs":  d.Get("user_task_timeout_ms").(int),
-		"comment":            d.Get("comment").(string),
-		"after":              d.Get("after").([]interface{}),
-		"when":               d.Get("when").(string),
-		"enabled":            d.Get("enabled").(bool),
+		"name":              d.Get("name").(string),
+		"database":          d.Get("database").(string),
+		"schema":            d.Get("schema").(string),
+		"sqlStatement":      d.Get("sql_statement").(string),
+		"warehouse":         d.Get("warehouse").(string),
+		"schedule":          d.Get("schedule").(string),
+		"sessionParameters": d.Get("session_parameters"),
+		"userTaskTimeoutMs": d.Get("user_task_timeout_ms").(int),
+		"comment":           d.Get("comment").(string),
+		"after":             d.Get("after").([]interface{}),
+		"when":              d.Get("when").(string),
+		"enabled":           d.Get("enabled").(bool),
 	}
 
 	var result map[string]interface{}

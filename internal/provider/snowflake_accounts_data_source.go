@@ -20,7 +20,7 @@ type SnowflakeAccountsDataSource struct {
 }
 
 type SnowflakeAccountsDataSourceModel struct {
-	ID       types.String                        `tfsdk:"id"`
+	ID       types.String                         `tfsdk:"id"`
 	Accounts []SnowflakeAccountsDataSourceAccount `tfsdk:"accounts"`
 }
 

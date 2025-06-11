@@ -92,10 +92,10 @@ func (r *SnowflakeGrantResource) Create(ctx context.Context, req resource.Create
 		"role":        data.Role.ValueString(),
 	})
 
-	data.ID = types.StringValue(fmt.Sprintf("grant-%s-%s-%s-%s", 
-		data.Privilege.ValueString(), 
-		data.ObjectType.ValueString(), 
-		data.ObjectName.ValueString(), 
+	data.ID = types.StringValue(fmt.Sprintf("grant-%s-%s-%s-%s",
+		data.Privilege.ValueString(),
+		data.ObjectType.ValueString(),
+		data.ObjectName.ValueString(),
 		data.Role.ValueString()))
 
 	tflog.Trace(ctx, "Created Snowflake grant")

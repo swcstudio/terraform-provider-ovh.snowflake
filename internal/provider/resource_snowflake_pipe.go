@@ -90,14 +90,14 @@ func resourceSnowflakePipeCreate(ctx context.Context, d *schema.ResourceData, me
 	_ = diag.Diagnostics{}
 
 	pipeConfig := map[string]interface{}{
-		"name":           d.Get("name").(string),
-		"database":       d.Get("database").(string),
-		"schema":         d.Get("schema").(string),
-		"copyStatement":  d.Get("copy_statement").(string),
-		"autoIngest":     d.Get("auto_ingest").(bool),
-		"awsSnsTopic":    d.Get("aws_sns_topic").(string),
-		"integration":    d.Get("integration").(string),
-		"comment":        d.Get("comment").(string),
+		"name":          d.Get("name").(string),
+		"database":      d.Get("database").(string),
+		"schema":        d.Get("schema").(string),
+		"copyStatement": d.Get("copy_statement").(string),
+		"autoIngest":    d.Get("auto_ingest").(bool),
+		"awsSnsTopic":   d.Get("aws_sns_topic").(string),
+		"integration":   d.Get("integration").(string),
+		"comment":       d.Get("comment").(string),
 	}
 
 	var result map[string]interface{}

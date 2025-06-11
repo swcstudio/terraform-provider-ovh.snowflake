@@ -21,13 +21,13 @@ type SnowflakeWarehouseResource struct {
 }
 
 type SnowflakeWarehouseResourceModel struct {
-	ID                types.String `tfsdk:"id"`
-	Name              types.String `tfsdk:"name"`
-	Size              types.String `tfsdk:"size"`
-	AutoSuspend       types.Int64  `tfsdk:"auto_suspend"`
-	AutoResume        types.Bool   `tfsdk:"auto_resume"`
+	ID                 types.String `tfsdk:"id"`
+	Name               types.String `tfsdk:"name"`
+	Size               types.String `tfsdk:"size"`
+	AutoSuspend        types.Int64  `tfsdk:"auto_suspend"`
+	AutoResume         types.Bool   `tfsdk:"auto_resume"`
 	InitiallySuspended types.Bool   `tfsdk:"initially_suspended"`
-	Comment           types.String `tfsdk:"comment"`
+	Comment            types.String `tfsdk:"comment"`
 }
 
 func (r *SnowflakeWarehouseResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {

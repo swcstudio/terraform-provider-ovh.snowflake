@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     snowflake-ovh = {
-      source  = "spectrumwebco/snowflake-ovh"
+      source  = "swcstudio/snowflake-ovh"
       version = "~> 0.1.0"
     }
   }
