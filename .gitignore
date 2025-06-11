@@ -1,0 +1,116 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+
+# Built provider binaries
+terraform-provider-*
+!terraform-provider-*/
+
+# Terraform files
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfplan.*
+.terraform/
+.terraform.lock.hcl
+*.tfvars
+*.tfvars.json
+crash.log
+crash.*.log
+
+# Terraform RC files
+.terraformrc
+terraform.rc
+
+# GoReleaser build artifacts
+dist/
+goreleaser.yml.bak
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+terraform.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Temporary folders
+tmp/
+temp/
+
+# Archives
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# GPG keys (never commit private keys)
+*.asc
+*.gpg
+*.pgp
+private-key*
+
+# Certificates
+*.pem
+*.key
+*.crt
+*.cert
+
+# Local development files
+examples/local-dev/terraform.tfstate*
+examples/local-dev/.terraform/
+examples/local-dev/*.tfplan
+
+# Test artifacts
+testdata/
+acceptance-test-*
+
+# Documentation build artifacts
+docs/data-sources/
+docs/resources/

@@ -1,0 +1,11 @@
+## Changelog
+* d7346ecce7090fe59460174f19996b2eb09d789c: Prepare for deployment: Update to swcstudio org, add deployment scripts and documentation (Oveshen Govender <oveshen.govender@gmail.com>)
+* a863eb1e653a34d4193010a38f473bea7017ebb7: Merge pull request #1 from spectrumwebco/devin/1749568112-terraform-plugin-framework-migration (OvChkn <127457986+SomeRandmGuyy@users.noreply.github.com>)
+* c2e10960d44a07e1d3d88494af5040a6c30f3aea: docs: Update README with comprehensive Plugin Framework documentation (Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>)
+* 5a11344765dc9b40564d6b6fefe5463e9b5fb0bf: docs: Generate comprehensive provider documentation with tfplugindocs (Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>)
+* 10a4ee166befa1c3c034c09980587249581c32c2: fix: Resolve Snowflake provider testing issues (Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>)
+* 5a212a8a2b79fb9584520bfdd45863027b42354f: feat: Complete Plugin Framework v1.15.0 migration for Snowflake provider (Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>)
+* 5995aca16f9ff3d2aca4dfe0f649c00f3ecc6b9b: chore: Update go.sum after dependency changes (Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>)
+* 04b971d2f59ac45f9af6c0123fe90f22df4f1b5f: feat: Migrate Snowflake OVH provider to Terraform Plugin Framework (Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>)
+* e322809178f4655c5f6310d9d273bb669d04084b: fix: Update dependencies with go mod tidy (Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>)
+* 3c5c9d7837cd93ac9fc80bb8381603dd2609d6f9: feat: Initial Snowflake OVH Terraform provider implementation (Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>)

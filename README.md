@@ -139,71 +139,43 @@ This project is licensed under the Mozilla Public License 2.0 - see the [LICENSE
 
 ## Deployment
 
-### Prerequisites
+This provider uses automated CI/CD pipelines for testing, building, and releasing.
 
-Before deploying this provider to the Terraform Registry, ensure you have:
+### Automated Release Process
 
-- ✅ **Go 1.18+** installed
-- ✅ **GoReleaser** installed (`brew install goreleaser`)
-- ✅ **GPG key** configured for signing releases
-- ✅ **GitHub Personal Access Token** with repo permissions
-- ✅ **Clean git state** (no uncommitted changes)
-
-### Quick Deploy
-
-For maintainers, use the automated release script:
+Releases are automatically created when a new tag is pushed:
 
 ```bash
-# Set your GitHub token
-export GITHUB_TOKEN=your_github_token_here
-
-# Create and publish a release
-./scripts/release.sh v0.1.0
+git tag v0.1.0
+git push origin v0.1.0
 ```
 
-### Manual Deployment Steps
+The GitHub Actions workflow will:
+- Run comprehensive tests
+- Build multi-platform binaries
+- Sign releases with GPG
+- Create GitHub releases
+- Upload all artifacts
 
-1. **Prepare the release:**
-   ```bash
-   git checkout main
-   git pull origin main
-   make test
-   ```
+### Prerequisites for Maintainers
 
-2. **Create and push a tag:**
-   ```bash
-   git tag v0.1.0
-   git push origin v0.1.0
-   ```
+- GPG private key configured in GitHub Secrets as `GPG_PRIVATE_KEY`
+- GPG passphrase configured in GitHub Secrets as `PASSPHRASE`
+- Repository configured for automated releases
 
-3. **Build and publish:**
-   ```bash
-   export GPG_TTY=$(tty)
-   export GPG_FINGERPRINT=your_gpg_fingerprint
-   export GITHUB_TOKEN=your_github_token
-   goreleaser release --clean
-   ```
+### Terraform Registry Publication
 
-4. **Register with Terraform Registry:**
-   - Go to [registry.terraform.io](https://registry.terraform.io)
-   - Sign in with GitHub
-   - Click "Publish" → "Provider"
-   - Select `swcstudio/terraform-provider-snowflake-ovh`
-   - Add your GPG public key
+After a successful release, the provider can be published to the Terraform Registry:
+
+1. Go to [registry.terraform.io](https://registry.terraform.io)
+2. Sign in with GitHub
+3. Click "Publish" → "Provider"
+4. Select `swcstudio/terraform-provider-snowflake-ovh`
+5. The registry will automatically detect releases and GPG signatures
 
 ## Development
 
-### Quick Start Development
-
-Run the automated development setup:
-
-```bash
-./scripts/dev-setup.sh
-```
-
-This will install all dependencies and configure your development environment.
-
-### Manual Development Setup
+### Getting Started
 
 ```bash
 # Clone the repository
@@ -220,42 +192,69 @@ make build
 # Run tests
 make test
 
-# Run acceptance tests (requires API credentials)
-make testacc
-
 # Install locally for testing
 make install
 ```
 
+### Continuous Integration
+
+This repository uses GitHub Actions for:
+
+- **Comprehensive Testing**: Unit tests, integration tests, and acceptance tests
+- **Code Quality**: Linting with golangci-lint, security scanning with gosec
+- **Multi-Platform Builds**: Automated builds for all supported platforms
+- **Documentation**: Automated documentation generation and validation
+- **Dependency Management**: Automated dependency reviews and license checks
+
 ### Development Workflow
 
-1. **Set up environment variables:**
+1. **Create a feature branch:**
    ```bash
-   cp .env.example .env
-   # Edit .env with your API credentials
+   git checkout -b feature/your-feature-name
    ```
 
 2. **Make your changes:**
    ```bash
    # Edit code in internal/
-   # Add tests in internal/provider/*_test.go
+   # Add comprehensive tests
    ```
 
-3. **Test your changes:**
+3. **Run local tests:**
    ```bash
-   make fmt      # Format code
-   make lint     # Run linter
-   make test     # Run unit tests
-   make build    # Build provider
+   make fmt test lint
    ```
 
-4. **Test locally:**
+4. **Push and create PR:**
    ```bash
-   make install  # Install to local Terraform
-   cd examples/local-dev
-   terraform init
-   terraform plan
+   git push origin feature/your-feature-name
+   # Create pull request on GitHub
    ```
+
+The CI pipeline will automatically run all tests and quality checks.
+
+### Testing Framework
+
+We maintain comprehensive test coverage with multiple test types:
+
+#### Unit Tests
+```bash
+make test
+```
+
+#### Integration Tests
+```bash
+INTEGRATION_TEST=1 make test
+```
+
+#### Acceptance Tests
+```bash
+TF_ACC=1 make testacc
+```
+
+#### Performance Tests
+```bash
+PERFORMANCE_TESTS=1 INTEGRATION_TEST=1 make test
+```
 
 ### Available Make Targets
 
@@ -271,78 +270,91 @@ make fmt      # Format code
 make clean    # Clean build artifacts
 ```
 
-### Development Shortcuts
-
-Use the development helper script for common tasks:
-
-```bash
-./dev.sh build    # Build provider
-./dev.sh test     # Run tests
-./dev.sh install  # Install locally
-./dev.sh docs     # Generate docs
-./dev.sh release v0.1.0  # Create release
-```
-
 ### Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+#### Quick Contributing Guide
 
 1. **Fork the repository**
 2. **Create a feature branch:** `git checkout -b feature/your-feature-name`
-3. **Make your changes** following the development workflow above
-4. **Add tests** for new functionality
+3. **Make your changes** with comprehensive tests
+4. **Ensure CI passes:** All tests, linting, and security checks
 5. **Update documentation** if needed
-6. **Commit your changes:** `git commit -am 'Add some feature'`
-7. **Push to the branch:** `git push origin feature/your-feature-name`
-8. **Submit a pull request**
+6. **Submit a pull request** with clear description
+
+#### Code Quality Standards
+
+- **Test Coverage**: Maintain >80% test coverage
+- **Documentation**: All public APIs must be documented
+- **Security**: No hardcoded credentials or security vulnerabilities
+- **Performance**: Consider impact on large-scale deployments
+- **Compatibility**: Maintain backward compatibility when possible
 
 ### Project Structure
 
 ```
+├── .github/
+│   ├── workflows/        # GitHub Actions CI/CD pipelines
+│   └── ISSUE_TEMPLATE/   # Issue and PR templates
 ├── internal/
-│   └── provider/          # Provider implementation
-├── examples/              # Example configurations
-│   ├── main.tf           # Basic example
-│   └── local-dev/        # Local development setup
-├── docs/                 # Auto-generated documentation
-├── scripts/              # Development and release scripts
-│   ├── dev-setup.sh      # Development environment setup
-│   └── release.sh        # Automated release script
-├── CONTRIBUTING.md       # Contribution guidelines
-├── DEPLOYMENT_CHECKLIST.md # Deployment checklist
-└── .goreleaser.yml       # Release configuration
+│   └── provider/         # Provider implementation and tests
+├── examples/             # Example configurations
+│   ├── main.tf          # Basic example
+│   └── local-dev/       # Local development setup
+├── docs/                # Auto-generated documentation
+├── .goreleaser.yml      # Release configuration
+├── .golangci.yml        # Linting configuration
+├── CONTRIBUTING.md      # Contribution guidelines
+├── SECURITY.md          # Security policy
+└── LICENSE              # Mozilla Public License 2.0
 ```
 
-### Testing
+### Testing Strategy
 
-#### Unit Tests
+#### Automated Testing in CI
+
+Our GitHub Actions pipeline runs:
+- **Unit Tests** on multiple Go versions (1.20, 1.21)
+- **Integration Tests** with real API calls (when credentials available)
+- **Acceptance Tests** for Terraform resource lifecycle testing
+- **Security Scanning** with gosec and dependency review
+- **Performance Tests** for large-scale operations
+- **Documentation Validation** ensuring examples are valid
+
+#### Local Testing
+
 ```bash
+# Run unit tests
 make test
+
+# Run with coverage
+go test -v -race -coverprofile=coverage.out ./...
+
+# Run acceptance tests (requires credentials)
+TF_ACC=1 make testacc
+
+# Run integration tests
+INTEGRATION_TEST=1 make test
+
+# Test provider installation
+make install
+cd examples/local-dev
+terraform init && terraform plan
 ```
 
-#### Acceptance Tests
-Acceptance tests require valid OVH and Snowflake credentials:
+#### Test Environment Setup
+
+For acceptance and integration tests, set environment variables:
 
 ```bash
 export OVH_ENDPOINT="ovh-eu"
 export OVH_APPLICATION_KEY="your-key"
-export OVH_APPLICATION_SECRET="your-secret" 
+export OVH_APPLICATION_SECRET="your-secret"
 export OVH_CONSUMER_KEY="your-consumer-key"
 export SNOWFLAKE_ACCOUNT="your-account"
 export SNOWFLAKE_USERNAME="your-username"
 export SNOWFLAKE_PASSWORD="your-password"
-
-make testacc
-```
-
-#### Local Testing
-```bash
-# Install provider locally
-make install
-
-# Test with example configuration
-cd examples/local-dev
-terraform init
-terraform plan
-terraform apply
 ```
 
 ## Support
