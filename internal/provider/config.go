@@ -9,7 +9,7 @@ import (
 	"github.com/ovh/go-ovh/ovh"
 )
 
-// Config holds the configuration for the provider
+// Config holds the configuration for the provider.
 type Config struct {
 	// OVH Configuration
 	OVHClient            *ovh.Client
@@ -31,12 +31,12 @@ type Config struct {
 	SnowflakePrivateKeyPath string
 }
 
-// NewConfig creates a new Config instance
+// NewConfig creates a new Config instance.
 func NewConfig() *Config {
 	return &Config{}
 }
 
-// ConfigureOVHClient sets up the OVH API client
+// ConfigureOVHClient sets up the OVH API client.
 func (c *Config) ConfigureOVHClient(ctx context.Context) error {
 	if c.OVHApplicationKey == "" || c.OVHApplicationSecret == "" || c.OVHConsumerKey == "" {
 		return fmt.Errorf("OVH credentials are required: application_key, application_secret, and consumer_key")
@@ -61,10 +61,10 @@ func (c *Config) ConfigureOVHClient(ctx context.Context) error {
 	return nil
 }
 
-// ConfigureSnowflakeClient sets up the Snowflake database connection
+// ConfigureSnowflakeClient sets up the Snowflake database connection.
 func (c *Config) ConfigureSnowflakeClient(ctx context.Context) error {
 	if c.SnowflakeAccount == "" || c.SnowflakeUsername == "" {
-		return fmt.Errorf("Snowflake account and username are required")
+		return fmt.Errorf("snowflake account and username are required")
 	}
 
 	// Check authentication method
@@ -72,7 +72,7 @@ func (c *Config) ConfigureSnowflakeClient(ctx context.Context) error {
 	hasPrivateKey := c.SnowflakePrivateKey != "" || c.SnowflakePrivateKeyPath != ""
 
 	if !hasPassword && !hasPrivateKey {
-		return fmt.Errorf("either password or private key authentication is required for Snowflake")
+		return fmt.Errorf("either password or private key authentication is required for snowflake")
 	}
 
 	// For now, we'll create a placeholder connection
@@ -91,7 +91,7 @@ func (c *Config) ConfigureSnowflakeClient(ctx context.Context) error {
 	return nil
 }
 
-// LoadConfiguration loads configuration from provider model
+// LoadConfiguration loads configuration from provider model.
 func (c *Config) LoadConfiguration(ctx context.Context, model *SnowflakeOVHProviderModel) error {
 	// Load OVH configuration
 	if !model.OVHEndpoint.IsNull() {
@@ -139,7 +139,7 @@ func (c *Config) LoadConfiguration(ctx context.Context, model *SnowflakeOVHProvi
 	return nil
 }
 
-// ValidateConfiguration validates the provider configuration
+// ValidateConfiguration validates the provider configuration.
 func (c *Config) ValidateConfiguration(ctx context.Context) error {
 	if c.OVHClient == nil {
 		return fmt.Errorf("OVH client is not configured")
