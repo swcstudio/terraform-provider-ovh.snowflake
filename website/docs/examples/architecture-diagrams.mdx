@@ -1,0 +1,356 @@
+---
+sidebar_position: 1
+title: Architecture Diagrams
+description: Visual representations of OVH Snowflake Terraform Provider architecture and workflows
+---
+
+# Architecture Diagrams
+
+This page demonstrates the enhanced Mermaid diagram capabilities with transparent backgrounds and full dark/light mode support. All diagrams automatically adapt to your theme preference.
+
+## Provider Architecture Overview
+
+The following diagram shows how the OVH Snowflake Terraform Provider integrates with both OVH Cloud and Snowflake services:
+
+```mermaid
+graph TB
+    subgraph "Development Environment"
+        TF[Terraform CLI]
+        CONFIG[terraform.tf]
+        STATE[terraform.tfstate]
+    end
+    
+    subgraph "OVH Snowflake Provider"
+        PROVIDER[Provider Core]
+        AUTH[Authentication Module]
+        RESOURCES[Resource Managers]
+        DATASOURCES[Data Source Handlers]
+    end
+    
+    subgraph "OVH Cloud Platform"
+        API[OVH API Gateway]
+        COMPUTE[Cloud Compute]
+        NETWORK[Network Services]
+        STORAGE[Object Storage]
+    end
+    
+    subgraph "Snowflake Platform"
+        SF_API[Snowflake API]
+        WAREHOUSE[Virtual Warehouses]
+        DATABASE[Databases]
+        USERS[User Management]
+    end
+    
+    TF --> PROVIDER
+    CONFIG --> PROVIDER
+    PROVIDER --> AUTH
+    AUTH --> API
+    AUTH --> SF_API
+    
+    PROVIDER --> RESOURCES
+    PROVIDER --> DATASOURCES
+    
+    RESOURCES --> COMPUTE
+    RESOURCES --> NETWORK
+    RESOURCES --> STORAGE
+    RESOURCES --> WAREHOUSE
+    RESOURCES --> DATABASE
+    RESOURCES --> USERS
+    
+    DATASOURCES --> API
+    DATASOURCES --> SF_API
+    
+    STATE --> TF
+    
+    classDef tfClass fill:#326ce5,stroke:#fff,stroke-width:2px,color:#fff
+    classDef ovhClass fill:#4a5fff,stroke:#fff,stroke-width:2px,color:#fff
+    classDef snowflakeClass fill:#29b5e8,stroke:#fff,stroke-width:2px,color:#fff
+    classDef providerClass fill:#6c5ce7,stroke:#fff,stroke-width:2px,color:#fff
+    
+    class TF,CONFIG,STATE tfClass
+    class API,COMPUTE,NETWORK,STORAGE ovhClass
+    class SF_API,WAREHOUSE,DATABASE,USERS snowflakeClass
+    class PROVIDER,AUTH,RESOURCES,DATASOURCES providerClass
+```
+
+## Deployment Workflow
+
+This flowchart illustrates the typical deployment process when using the provider:
+
+```mermaid
+flowchart TD
+    START([Start Deployment]) --> INIT[terraform init]
+    INIT --> PLAN[terraform plan]
+    PLAN --> VALIDATE{Configuration Valid?}
+    
+    VALIDATE -->|No| FIX[Fix Configuration]
+    FIX --> PLAN
+    
+    VALIDATE -->|Yes| APPLY[terraform apply]
+    APPLY --> AUTH_OVH{OVH Authentication}
+    
+    AUTH_OVH -->|Failed| AUTH_ERROR[Authentication Error]
+    AUTH_ERROR --> END_ERROR([Deployment Failed])
+    
+    AUTH_OVH -->|Success| AUTH_SF{Snowflake Authentication}
+    
+    AUTH_SF -->|Failed| SF_ERROR[Snowflake Auth Error]
+    SF_ERROR --> END_ERROR
+    
+    AUTH_SF -->|Success| PROVISION[Provision Resources]
+    
+    PROVISION --> CREATE_COMPUTE[Create OVH Compute]
+    CREATE_COMPUTE --> CREATE_NETWORK[Configure Network]
+    CREATE_NETWORK --> CREATE_SF[Setup Snowflake]
+    CREATE_SF --> CONFIGURE[Configure Integration]
+    
+    CONFIGURE --> VERIFY{Verify Deployment}
+    VERIFY -->|Failed| ROLLBACK[Rollback Changes]
+    ROLLBACK --> END_ERROR
+    
+    VERIFY -->|Success| UPDATE_STATE[Update Terraform State]
+    UPDATE_STATE --> END_SUCCESS([Deployment Complete])
+    
+    classDef startEnd fill:#10b981,stroke:#fff,stroke-width:2px,color:#fff
+    classDef process fill:#29b5e8,stroke:#fff,stroke-width:2px,color:#fff
+    classDef decision fill:#f59e0b,stroke:#fff,stroke-width:2px,color:#fff
+    classDef error fill:#ef4444,stroke:#fff,stroke-width:2px,color:#fff
+    
+    class START,END_SUCCESS startEnd
+    class END_ERROR,AUTH_ERROR,SF_ERROR,ROLLBACK error
+    class INIT,PLAN,APPLY,PROVISION,CREATE_COMPUTE,CREATE_NETWORK,CREATE_SF,CONFIGURE,UPDATE_STATE,FIX process
+    class VALIDATE,AUTH_OVH,AUTH_SF,VERIFY decision
+```
+
+## API Interaction Sequence
+
+The sequence diagram below shows how the provider interacts with both OVH and Snowflake APIs:
+
+```mermaid
+sequenceDiagram
+    participant User as Developer
+    participant TF as Terraform
+    participant Provider as OVH Provider
+    participant OVH as OVH API
+    participant SF as Snowflake API
+    
+    User->>TF: terraform apply
+    TF->>Provider: Initialize Provider
+    Provider->>Provider: Load Configuration
+    
+    Note over Provider: Authentication Phase
+    Provider->>OVH: Authenticate with API Key
+    OVH-->>Provider: Access Token
+    Provider->>SF: Authenticate with Account
+    SF-->>Provider: Session Token
+    
+    Note over Provider: Resource Creation
+    Provider->>OVH: Create Cloud Project
+    OVH-->>Provider: Project ID
+    Provider->>OVH: Setup Network
+    OVH-->>Provider: Network Config
+    Provider->>OVH: Launch Compute Instance
+    OVH-->>Provider: Instance Details
+    
+    Note over Provider: Snowflake Configuration
+    Provider->>SF: Create Database
+    SF-->>Provider: Database Created
+    Provider->>SF: Create Warehouse
+    SF-->>Provider: Warehouse Created
+    Provider->>SF: Configure Users
+    SF-->>Provider: Users Configured
+    
+    Note over Provider: Integration Setup
+    Provider->>SF: Setup External Stage
+    SF-->>Provider: Stage Configured
+    Provider->>OVH: Configure Storage Access
+    OVH-->>Provider: Access Configured
+    
+    Provider-->>TF: Resources Created
+    TF-->>User: Deployment Complete
+    
+    Note over User,SF: Resources are now available
+```
+
+## Network Architecture
+
+This diagram shows the network topology created by the provider:
+
+```mermaid
+graph TB
+    subgraph "Internet"
+        USERS[End Users]
+        APPS[Applications]
+    end
+    
+    subgraph "OVH Cloud Region"
+        subgraph "Public Network"
+            LB[Load Balancer]
+            NAT[NAT Gateway]
+        end
+        
+        subgraph "Private Network (10.0.0.0/16)"
+            subgraph "Compute Subnet (10.0.1.0/24)"
+                COMPUTE1[Compute Instance 1]
+                COMPUTE2[Compute Instance 2]
+            end
+            
+            subgraph "Database Subnet (10.0.2.0/24)"
+                PROXY[Snowflake Proxy]
+            end
+            
+            subgraph "Storage Subnet (10.0.3.0/24)"
+                STORAGE[Object Storage]
+            end
+        end
+    end
+    
+    subgraph "Snowflake Cloud"
+        SF_LB[Snowflake Load Balancer]
+        SF_COMPUTE[Snowflake Warehouses]
+        SF_STORAGE[Snowflake Storage]
+    end
+    
+    USERS --> LB
+    APPS --> LB
+    LB --> COMPUTE1
+    LB --> COMPUTE2
+    
+    COMPUTE1 --> PROXY
+    COMPUTE2 --> PROXY
+    PROXY --> SF_LB
+    
+    COMPUTE1 --> STORAGE
+    COMPUTE2 --> STORAGE
+    STORAGE --> SF_STORAGE
+    
+    SF_LB --> SF_COMPUTE
+    SF_COMPUTE --> SF_STORAGE
+    
+    COMPUTE1 --> NAT
+    COMPUTE2 --> NAT
+    NAT --> SF_LB
+    
+    classDef internet fill:#94a3b8,stroke:#475569,stroke-width:2px
+    classDef ovh fill:#4a5fff,stroke:#fff,stroke-width:2px,color:#fff
+    classDef snowflake fill:#29b5e8,stroke:#fff,stroke-width:2px,color:#fff
+    classDef network fill:#10b981,stroke:#fff,stroke-width:2px,color:#fff
+    
+    class USERS,APPS internet
+    class LB,NAT,COMPUTE1,COMPUTE2,PROXY,STORAGE ovh
+    class SF_LB,SF_COMPUTE,SF_STORAGE snowflake
+```
+
+## Resource Lifecycle
+
+This Gantt chart shows the typical timeline for resource provisioning:
+
+```mermaid
+gantt
+    title OVH Snowflake Resource Provisioning Timeline
+    dateFormat X
+    axisFormat %s
+    
+    section Infrastructure
+    Initialize Provider     :done, init, 0, 5s
+    Create Cloud Project    :done, project, after init, 10s
+    Setup Network          :done, network, after project, 15s
+    Launch Compute         :active, compute, after network, 30s
+    Configure Storage      :storage, after compute, 20s
+    
+    section Snowflake
+    Authenticate           :done, sf-auth, 0, 8s
+    Create Database        :active, database, after sf-auth, 25s
+    Create Warehouse       :warehouse, after database, 20s
+    Configure Users        :users, after warehouse, 15s
+    
+    section Integration
+    Setup External Stage   :integration, after storage, 10s
+    Configure Permissions  :permissions, after users, 10s
+    Validate Connection    :validation, after permissions, 5s
+    
+    section Finalization
+    Update State          :state, after validation, 5s
+    Generate Outputs      :outputs, after state, 3s
+```
+
+## Data Flow Architecture
+
+This diagram illustrates how data flows through the integrated system:
+
+```mermaid
+flowchart LR
+    subgraph "Data Sources"
+        APP1[Application 1]
+        APP2[Application 2]
+        API[External APIs]
+        FILES[File Systems]
+    end
+    
+    subgraph "OVH Infrastructure"
+        INGRESS[Ingress Gateway]
+        TRANSFORM[Data Transform Service]
+        QUEUE[Message Queue]
+        STORAGE[Object Storage]
+    end
+    
+    subgraph "Snowflake Platform"
+        STAGE[External Stage]
+        PIPE[Snowpipe]
+        WH[Warehouse]
+        DB[Database]
+        TABLES[Tables]
+    end
+    
+    subgraph "Analytics & BI"
+        BI[BI Tools]
+        DASH[Dashboards]
+        ML[ML Models]
+        REPORTS[Reports]
+    end
+    
+    APP1 --> INGRESS
+    APP2 --> INGRESS
+    API --> INGRESS
+    FILES --> STORAGE
+    
+    INGRESS --> TRANSFORM
+    TRANSFORM --> QUEUE
+    QUEUE --> STORAGE
+    
+    STORAGE --> STAGE
+    STAGE --> PIPE
+    PIPE --> WH
+    WH --> DB
+    DB --> TABLES
+    
+    TABLES --> BI
+    TABLES --> DASH
+    TABLES --> ML
+    TABLES --> REPORTS
+    
+    classDef source fill:#f59e0b,stroke:#fff,stroke-width:2px,color:#fff
+    classDef ovh fill:#4a5fff,stroke:#fff,stroke-width:2px,color:#fff
+    classDef snowflake fill:#29b5e8,stroke:#fff,stroke-width:2px,color:#fff
+    classDef analytics fill:#10b981,stroke:#fff,stroke-width:2px,color:#fff
+    
+    class APP1,APP2,API,FILES source
+    class INGRESS,TRANSFORM,QUEUE,STORAGE ovh
+    class STAGE,PIPE,WH,DB,TABLES snowflake
+    class BI,DASH,ML,REPORTS analytics
+```
+
+## Features
+
+All diagrams on this page feature:
+
+- **🎨 Transparent Backgrounds**: No white boxes that clash with dark mode
+- **🌓 Dynamic Theming**: Automatic adaptation to light/dark mode preferences
+- **📱 Responsive Design**: Optimized for all screen sizes
+- **⚡ Smooth Animations**: Subtle entrance animations as you scroll
+- **🎯 Professional Styling**: Consistent with OVH and Snowflake brand colors
+- **♿ Accessibility**: High contrast support and reduced motion options
+
+## Theme Support
+
+Toggle between light and dark modes using the theme switcher in the navbar to see how all diagrams seamlessly adapt their colors while maintaining transparency and readability.

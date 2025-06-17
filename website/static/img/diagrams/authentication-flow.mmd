@@ -1,0 +1,42 @@
+sequenceDiagram
+    participant User as User/CI System
+    participant TF as Terraform Core
+    participant Provider as OVH Snowflake Provider
+    participant Config as Configuration Manager
+    participant Auth as Authentication Manager
+    participant OVH as OVH API Gateway
+    participant SF as Snowflake API
+    
+    Note over User,SF: Provider Initialization
+    User->>TF: terraform init/plan/apply
+    TF->>Provider: Initialize Provider
+    Provider->>Config: Load Configuration
+    Config->>Auth: Parse Credentials
+    
+    Note over Auth,OVH: OVH Authentication
+    Auth->>OVH: Authenticate with API Keys
+    OVH-->>Auth: Validate Credentials
+    OVH-->>Auth: Return Session Token
+    
+    Note over Auth,SF: Snowflake Authentication
+    Auth->>SF: Authenticate with Key Pair
+    SF-->>Auth: Validate JWT Token
+    SF-->>Auth: Return Session
+    
+    Auth-->>Provider: Authentication Complete
+    Provider-->>TF: Provider Ready
+    
+    Note over TF,SF: Resource Operations
+    TF->>Provider: Execute Operations
+    Provider->>OVH: Route via OVH Infrastructure
+    Provider->>SF: Execute Snowflake Commands
+    SF-->>Provider: Return Results
+    Provider-->>TF: Operation Complete
+    TF-->>User: Success/Failure
+    
+    Note over Provider,SF: Continuous Monitoring
+    loop Health Checks
+        Provider->>OVH: Check OVH Status
+        Provider->>SF: Check Snowflake Status
+        Provider->>Provider: Update Connection Pool
+    end

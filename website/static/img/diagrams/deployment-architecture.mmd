@@ -1,0 +1,94 @@
+graph TB
+    subgraph "Development Environment"
+        A[Developer Workstation]
+        B[Local Terraform]
+        C[Provider Development]
+        D[Local Testing]
+        A --> B
+        B --> C
+        C --> D
+    end
+    
+    subgraph "CI/CD Pipeline"
+        E[Source Control]
+        F[GitHub Actions]
+        G[Automated Testing]
+        H[Security Scanning]
+        I[Build & Package]
+        J[Deploy to Registry]
+        E --> F
+        F --> G
+        G --> H
+        H --> I
+        I --> J
+    end
+    
+    subgraph "Production Deployment"
+        K[Terraform Cloud/Enterprise]
+        L[Production Workspace]
+        M[State Management]
+        N[Policy Enforcement]
+        K --> L
+        L --> M
+        L --> N
+    end
+    
+    subgraph "Infrastructure Layer"
+        O[OVH Cloud Infrastructure]
+        P[Snowflake Cloud Platform]
+        Q[Network Connectivity]
+        R[Load Balancers]
+        S[Monitoring Systems]
+        O --> Q
+        P --> Q
+        Q --> R
+        R --> S
+    end
+    
+    subgraph "Security & Compliance"
+        T[Identity & Access Management]
+        U[Encryption at Rest]
+        V[Encryption in Transit]
+        W[Audit Logging]
+        X[Compliance Monitoring]
+        T --> U
+        T --> V
+        T --> W
+        W --> X
+    end
+    
+    subgraph "Monitoring & Observability"
+        Y[Metrics Collection]
+        Z[Log Aggregation]
+        AA[Alerting System]
+        BB[Performance Dashboard]
+        CC[Cost Monitoring]
+        Y --> AA
+        Z --> AA
+        AA --> BB
+        BB --> CC
+    end
+    
+    D --> E
+    J --> K
+    L --> O
+    L --> P
+    
+    O --> T
+    P --> T
+    O --> Y
+    P --> Y
+    
+    classDef dev fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef cicd fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef prod fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef infra fill:#00185c,stroke:#333,stroke-width:2px,color:#fff
+    classDef security fill:#ffebee,stroke:#d32f2f,stroke-width:2px
+    classDef monitoring fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    
+    class A,B,C,D dev
+    class E,F,G,H,I,J cicd
+    class K,L,M,N prod
+    class O,P,Q,R,S infra
+    class T,U,V,W,X security
+    class Y,Z,AA,BB,CC monitoring

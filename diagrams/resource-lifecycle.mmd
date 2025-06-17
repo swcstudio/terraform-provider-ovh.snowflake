@@ -1,0 +1,64 @@
+stateDiagram-v2
+    [*] --> ConfigParsing: terraform init
+    ConfigParsing --> Planning: terraform plan
+    Planning --> Creating: terraform apply (create)
+    Planning --> Updating: terraform apply (update)
+    Planning --> Destroying: terraform destroy
+    
+    state ConfigParsing {
+        [*] --> LoadingConfig
+        LoadingConfig --> ValidatingConfig
+        ValidatingConfig --> InitializingProvider
+        InitializingProvider --> [*]
+    }
+    
+    state Planning {
+        [*] --> ReadingState
+        ReadingState --> CalculatingDiff
+        CalculatingDiff --> ValidatingPlan
+        ValidatingPlan --> [*]
+    }
+    
+    state Creating {
+        [*] --> ValidatingInput
+        ValidatingInput --> AuthenticatingAPIs
+        AuthenticatingAPIs --> ProvisioningResource
+        ProvisioningResource --> ConfiguringResource
+        ConfiguringResource --> VerifyingState
+        VerifyingState --> UpdatingState
+        UpdatingState --> Active
+    }
+    
+    state Updating {
+        [*] --> ReadingCurrentState
+        ReadingCurrentState --> ValidatingChanges
+        ValidatingChanges --> ApplyingChanges
+        ApplyingChanges --> VerifyingUpdate
+        VerifyingUpdate --> UpdatingState
+        UpdatingState --> Active
+    }
+    
+    state Destroying {
+        [*] --> ValidatingDestroy
+        ValidatingDestroy --> RemovingResource
+        RemovingResource --> CleaningUp
+        CleaningUp --> UpdatingState
+        UpdatingState --> [*]
+    }
+    
+    Active --> Updating: Configuration Change
+    Active --> Destroying: terraform destroy
+    Creating --> Active: Success
+    Updating --> Active: Success
+    
+    note right of Creating
+        Resources go through validation,
+        authentication, provisioning,
+        and verification phases
+    end note
+    
+    note right of Active
+        Resources are continuously
+        monitored and can be
+        updated or destroyed
+    end note

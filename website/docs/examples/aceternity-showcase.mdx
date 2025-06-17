@@ -1,0 +1,682 @@
+---
+sidebar_position: 2
+title: Aceternity UI Showcase
+description: Comprehensive demonstration of all Aceternity UI components integrated with our documentation
+---
+
+import {
+  DocsHero,
+  FeatureShowcase,
+  QuickStart,
+  CodeExample,
+  APIReference,
+  BentoGrid,
+  BentoGridItem,
+  FeatureBentoItem,
+  QuickStartBentoItem,
+  AnimatedBentoGrid,
+  CardContainer,
+  CardBody,
+  CardItem,
+  BackgroundBeams,
+  HeroBackgroundBeams,
+  DocsBackgroundBeams,
+  InteractiveBackgroundBeams,
+  TextGenerateEffect,
+  HeadingGenerateEffect,
+  DocTextGenerate,
+  CodeGenerateEffect,
+  AnimatedTooltip,
+  SimpleTooltip,
+  DocTooltip,
+  FeatureTooltip,
+  StatusBadge,
+  SectionDivider,
+  AnimatedBreadcrumbs,
+  DocSearch,
+} from '@site/src/components/aceternity';
+
+# Aceternity UI Component Showcase
+
+<AnimatedBreadcrumbs 
+  items={[
+    { label: "Documentation", href: "/docs/intro", icon: "📚" },
+    { label: "Examples", href: "/docs/examples", icon: "🎯" },
+    { label: "Aceternity UI Showcase", icon: "✨" }
+  ]} 
+/>
+
+<DocsHero
+  title="State-of-the-Art UI Components"
+  subtitle="Aceternity UI Integration"
+  description="Experience next-generation documentation with purpose-driven UI components designed specifically for enterprise Terraform provider documentation. Each component serves a strategic purpose in enhancing user experience and engagement."
+  primaryCTA={{
+    text: "Explore Components →",
+    href: "#hero-section"
+  }}
+  secondaryCTA={{
+    text: "View Source Code",
+    href: "https://github.com/swcstudio/terraform-provider-ovh-snowflake"
+  }}
+  badges={[
+    { text: "Interactive", variant: "new" },
+    { text: "Responsive", variant: "stable" },
+    { text: "Accessible", variant: "beta" }
+  ]}
+  version="1.0.0"
+  lastUpdated="December 2024"
+/>
+
+## 🎯 Purpose-Driven Component Design
+
+Our Aceternity UI integration focuses on solving real documentation challenges:
+
+- **Enhanced User Engagement** - Interactive components that keep users focused
+- **Information Hierarchy** - Clear visual organization of complex technical content
+- **Progressive Disclosure** - Revealing information at the right time and context
+- **Accessibility First** - Ensuring all users can access and understand the content
+
+<SectionDivider title="Component Demonstrations" description="Each component solves specific documentation challenges" />
+
+## 🚀 Hero Components
+
+### DocsHero Component
+
+The `DocsHero` component creates an impressive entry point for documentation sections with animated text, status badges, and clear call-to-action buttons.
+
+**Use Cases:**
+- Landing pages for major documentation sections
+- Product announcements and feature releases
+- Getting started guides with clear progression paths
+
+<CodeExample
+  title="DocsHero Implementation"
+  description="Complete hero section with animated text generation and background effects"
+  code={`<DocsHero
+  title="The Snowflake Terraform Provider for OVHcloud"
+  subtitle="Enterprise Infrastructure as Code"
+  description="Manage Snowflake resources through OVH infrastructure with state-of-the-art Terraform automation."
+  primaryCTA={{
+    text: "Get Started →",
+    href: "/docs/intro"
+  }}
+  secondaryCTA={{
+    text: "View Examples",
+    href: "/docs/examples"
+  }}
+  badges={[
+    { text: "v1.0.0", variant: "stable" },
+    { text: "Enterprise Ready", variant: "new" }
+  ]}
+  version="1.0.0"
+  lastUpdated="December 2024"
+/>`}
+  language="jsx"
+  copyable
+/>
+
+<SectionDivider />
+
+## 📊 Layout & Organization Components
+
+### Bento Grid System
+
+The Bento Grid provides a flexible, visually appealing way to organize documentation content with different sizes and interactive states.
+
+<AnimatedBentoGrid className="grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+  <FeatureBentoItem
+    title="Installation Guide"
+    description="Quick setup for the OVH Snowflake provider with authentication and basic configuration."
+    icon={<div className="text-3xl">🚀</div>}
+    href="/docs/getting-started/installation"
+    size="lg"
+    isNew={true}
+  />
+  
+  <FeatureBentoItem
+    title="API Reference"
+    description="Complete API documentation with examples and parameter details."
+    icon={<div className="text-3xl">📖</div>}
+    href="/api/intro"
+    badge="Reference"
+  />
+  
+  <FeatureBentoItem
+    title="Examples"
+    description="Real-world usage patterns and architecture diagrams."
+    icon={<div className="text-3xl">🎯</div>}
+    href="/docs/examples/architecture-diagrams"
+    badge="Interactive"
+  />
+  
+  <FeatureBentoItem
+    title="Security"
+    description="Enterprise security features and compliance guidelines."
+    icon={<div className="text-3xl">🔒</div>}
+    href="/docs/resources/role"
+    badge="Enterprise"
+  />
+  
+  <FeatureBentoItem
+    title="Coming Soon"
+    description="Advanced monitoring and alerting features currently in development."
+    icon={<div className="text-3xl">⏳</div>}
+    isComingSoon={true}
+  />
+</AnimatedBentoGrid>
+
+<CodeExample
+  title="Bento Grid Usage"
+  description="Flexible grid system for organizing content with interactive hover effects"
+  code={`<AnimatedBentoGrid className="grid-cols-1 md:grid-cols-3 gap-4">
+  <FeatureBentoItem
+    title="Installation Guide"
+    description="Quick setup instructions"
+    icon={<div className="text-3xl">🚀</div>}
+    href="/docs/installation"
+    size="lg"
+    isNew={true}
+  />
+  
+  <FeatureBentoItem
+    title="API Reference"
+    description="Complete documentation"
+    icon={<div className="text-3xl">📖</div>}
+    href="/api/intro"
+    badge="Reference"
+  />
+</AnimatedBentoGrid>`}
+  language="jsx"
+  copyable
+/>
+
+<SectionDivider />
+
+## 🎨 Interactive Visual Components
+
+### 3D Card Effects
+
+3D cards add depth and interactivity to showcase important features or resources with hover animations.
+
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 my-8">
+  <CardContainer className="inter-var">
+    <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-blue-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto h-auto rounded-xl p-6 border">
+      <CardItem translateZ="50" className="text-xl font-bold text-neutral-600 dark:text-white">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-2xl">🗄️</span>
+          Database Resources
+        </div>
+      </CardItem>
+      <CardItem as="p" translateZ="60" className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300">
+        Comprehensive database management with automated backups, scaling, and monitoring capabilities.
+      </CardItem>
+      <CardItem translateZ="100" className="w-full mt-4">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+            <span className="text-sm">Automated backups</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+            <span className="text-sm">Real-time monitoring</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+            <span className="text-sm">Auto-scaling</span>
+          </div>
+        </div>
+      </CardItem>
+    </CardBody>
+  </CardContainer>
+
+  <CardContainer className="inter-var">
+    <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-green-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto h-auto rounded-xl p-6 border">
+      <CardItem translateZ="50" className="text-xl font-bold text-neutral-600 dark:text-white">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-2xl">👥</span>
+          User Management
+        </div>
+      </CardItem>
+      <CardItem as="p" translateZ="60" className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300">
+        Role-based access control with enterprise-grade security and compliance features.
+      </CardItem>
+      <CardItem translateZ="100" className="w-full mt-4">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
+            <span className="text-sm">RBAC support</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+            <span className="text-sm">Audit logging</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
+            <span className="text-sm">SSO integration</span>
+          </div>
+        </div>
+      </CardItem>
+    </CardBody>
+  </CardContainer>
+
+  <CardContainer className="inter-var">
+    <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-purple-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto h-auto rounded-xl p-6 border">
+      <CardItem translateZ="50" className="text-xl font-bold text-neutral-600 dark:text-white">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-2xl">⚡</span>
+          Performance
+        </div>
+      </CardItem>
+      <CardItem as="p" translateZ="60" className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300">
+        High-performance infrastructure with intelligent scaling and cost optimization.
+      </CardItem>
+      <CardItem translateZ="100" className="w-full mt-4">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-cyan-500 rounded-full"></span>
+            <span className="text-sm">Auto-scaling</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
+            <span className="text-sm">Cost optimization</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-pink-500 rounded-full"></span>
+            <span className="text-sm">Performance metrics</span>
+          </div>
+        </div>
+      </CardItem>
+    </CardBody>
+  </CardContainer>
+</div>
+
+<SectionDivider />
+
+## 💬 Interactive Help Components
+
+### Tooltips & Context Help
+
+Different tooltip styles for various documentation needs:
+
+<div className="space-y-6 my-8">
+  <div className="flex flex-wrap gap-4 items-center">
+    <SimpleTooltip content="Basic information tooltip">
+      <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+        Simple Tooltip
+      </button>
+    </SimpleTooltip>
+    
+    <DocTooltip
+      term="Terraform Provider"
+      definition="A plugin that enables Terraform to interact with APIs of external services and resources."
+      example="terraform { required_providers { ovh = { source = 'swcstudio/snowflake' } } }"
+    >
+      <span className="underline decoration-dashed decoration-blue-500 cursor-help">
+        Technical Term
+      </span>
+    </DocTooltip>
+    
+    <FeatureTooltip
+      title="New Feature"
+      description="Advanced monitoring capabilities with real-time alerts and custom dashboards."
+      badge="v1.1.0"
+      badgeColor="green"
+    >
+      <span className="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200 rounded-full text-sm cursor-pointer">
+        ✨ Enhanced Monitoring
+      </span>
+    </FeatureTooltip>
+  </div>
+</div>
+
+### Status Badges
+
+Visual indicators for different states and features:
+
+<div className="flex flex-wrap gap-3 my-6">
+  <StatusBadge status="stable" />
+  <StatusBadge status="beta" />
+  <StatusBadge status="new" />
+  <StatusBadge status="experimental" />
+  <StatusBadge status="deprecated" />
+</div>
+
+<SectionDivider />
+
+## 📝 Text Animation Effects
+
+### Dynamic Text Generation
+
+<div className="space-y-8 my-8">
+  <div>
+    <h4 className="text-lg font-semibold mb-4">Heading Animation</h4>
+    <HeadingGenerateEffect
+      heading="Enterprise-Grade Infrastructure Management"
+      level={3}
+      speed="normal"
+      highlightWords={["Enterprise-Grade", "Infrastructure"]}
+      highlightColor="text-blue-600"
+    />
+  </div>
+  
+  <div>
+    <h4 className="text-lg font-semibold mb-4">Description Animation</h4>
+    <DocTextGenerate
+      text="Deploy and manage Snowflake resources on OVH Cloud with complete automation, monitoring, and enterprise security features built for production workloads."
+      type="description"
+      speed="fast"
+    />
+  </div>
+  
+  <div>
+    <h4 className="text-lg font-semibold mb-4">Code Animation</h4>
+    <CodeGenerateEffect
+      code={`resource "ovh_snowflake_database" "main" {
+  name = "production_db"
+  comment = "Main production database"
+}`}
+      language="hcl"
+      speed="normal"
+      cursor={true}
+    />
+  </div>
+</div>
+
+<SectionDivider />
+
+## 🛠 Practical Documentation Components
+
+### Quick Start Guide
+
+<QuickStart
+  title="Interactive Setup Guide"
+  steps={[
+    {
+      title: "Prerequisites",
+      description: "Ensure you have Terraform installed and OVH credentials configured.",
+      code: `# Check Terraform version
+terraform version
+
+# Verify OVH CLI access
+ovh profile list`,
+      language: "bash",
+      action: {
+        text: "Installation Guide",
+        href: "/docs/getting-started/installation"
+      }
+    },
+    {
+      title: "Provider Configuration",
+      description: "Add the provider to your Terraform configuration file.",
+      code: `terraform {
+  required_providers {
+    ovh = {
+      source  = "swcstudio/snowflake"
+      version = "~> 1.0"
+    }
+  }
+}
+
+provider "ovh" {
+  endpoint = "ovh-eu"
+}`,
+      language: "hcl",
+      action: {
+        text: "Configuration Guide",
+        href: "/docs/getting-started/authentication"
+      }
+    },
+    {
+      title: "Deploy Your First Resource",
+      description: "Create a simple Snowflake database to test the provider.",
+      code: `resource "ovh_snowflake_database" "test" {
+  name    = "test_database"
+  comment = "Test database for provider validation"
+  
+  tags = {
+    Environment = "test"
+    ManagedBy   = "terraform"
+  }
+}`,
+      language: "hcl",
+      action: {
+        text: "View Examples",
+        href: "/docs/examples/architecture-diagrams"
+      }
+    }
+  ]}
+  completionReward={{
+    title: "🎉 Setup Complete!",
+    description: "You've successfully configured the provider. Ready to explore advanced features?",
+    action: {
+      text: "Explore Advanced Features →",
+      href: "/docs/resources/overview"
+    }
+  }}
+/>
+
+### API Reference Example
+
+<APIReference
+  endpoint={{
+    method: "POST",
+    path: "/v1/cloud/project/{serviceName}/database",
+    description: "Create a new Snowflake database instance on OVH infrastructure"
+  }}
+  parameters={[
+    {
+      name: "serviceName",
+      type: "string",
+      required: true,
+      description: "The OVH cloud project service name",
+      example: "1234567890abcdef"
+    },
+    {
+      name: "description",
+      type: "string",
+      required: true,
+      description: "Human-readable description of the database",
+      example: "Production Snowflake database for analytics"
+    },
+    {
+      name: "engine",
+      type: "string",
+      required: true,
+      description: "Database engine type",
+      example: "snowflake"
+    },
+    {
+      name: "plan",
+      type: "string",
+      required: false,
+      description: "Service plan for the database instance",
+      example: "business"
+    }
+  ]}
+  response={{
+    example: `{
+  "id": "abcd-1234-efgh-5678",
+  "description": "Production Snowflake database",
+  "engine": "snowflake",
+  "status": "creating",
+  "endpoints": [
+    {
+      "component": "snowflake",
+      "domain": "myaccount.snowflakecomputing.com",
+      "port": 443,
+      "scheme": "https"
+    }
+  ],
+  "createdAt": "2024-12-19T10:30:00Z"
+}`,
+    schema: "Database creation response"
+  }}
+  examples={[
+    {
+      title: "Basic Database Creation",
+      description: "Create a simple Snowflake database with minimal configuration",
+      code: `curl -X POST "https://api.ovh.com/v1/cloud/project/myproject/database" \\
+  -H "Content-Type: application/json" \\
+  -H "X-Ovh-Application: your_app_key" \\
+  -d '{
+    "description": "My Snowflake Database",
+    "engine": "snowflake",
+    "plan": "business"
+  }'`,
+      language: "bash"
+    },
+    {
+      title: "Enterprise Configuration",
+      description: "Create a database with advanced enterprise features",
+      code: `{
+  "description": "Enterprise Analytics Database",
+  "engine": "snowflake", 
+  "plan": "enterprise",
+  "nodes": {
+    "region": "GRA",
+    "nodeType": "db1-15",
+    "number": 3
+  },
+  "backupTime": "02:00:00",
+  "maintenanceTime": "sunday:03:00:00"
+}`,
+      language: "json"
+    }
+  ]}
+/>
+
+<SectionDivider />
+
+## 🎯 Feature Showcase
+
+<FeatureShowcase
+  title="Why These Components Matter"
+  description="Each component is designed to solve specific documentation challenges and enhance user experience"
+  features={[
+    {
+      title: "Enhanced Engagement",
+      description: "Interactive animations and hover effects keep users engaged with the content, reducing bounce rates and improving comprehension.",
+      icon: <div className="text-3xl">🎯</div>,
+      href: "#interactive-components",
+      isNew: true
+    },
+    {
+      title: "Progressive Disclosure",
+      description: "Information is revealed contextually through tooltips, expandable sections, and step-by-step guides.",
+      icon: <div className="text-3xl">📚</div>,
+      href: "#tooltips"
+    },
+    {
+      title: "Visual Hierarchy",
+      description: "Clear organization through grids, cards, and spacing helps users find information quickly.",
+      icon: <div className="text-3xl">🏗️</div>,
+      href: "#layout-components"
+    },
+    {
+      title: "Accessibility First",
+      description: "All components support keyboard navigation, screen readers, and high contrast modes.",
+      icon: <div className="text-3xl">♿</div>,
+      href: "#accessibility",
+      badge: "WCAG 2.1"
+    },
+    {
+      title: "Mobile Optimized",
+      description: "Responsive design ensures excellent experience across all device sizes and orientations.",
+      icon: <div className="text-3xl">📱</div>,
+      href: "#responsive-design"
+    },
+    {
+      title: "Performance Focused",
+      description: "Optimized animations and lazy loading ensure fast page loads and smooth interactions.",
+      icon: <div className="text-3xl">⚡</div>,
+      href: "#performance",
+      badge: "< 100ms"
+    }
+  ]}
+/>
+
+<SectionDivider />
+
+## 🎨 Background Effects
+
+Our background components add visual depth without interfering with content readability:
+
+<DocsBackgroundBeams className="p-8 rounded-lg border border-gray-200 dark:border-gray-700 my-8">
+  <div className="text-center">
+    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+      DocsBackgroundBeams Effect
+    </h3>
+    <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+      Subtle animated beams that enhance visual appeal while maintaining content focus. 
+      Perfect for highlighting important sections or creating visual breaks in long documentation.
+    </p>
+  </div>
+</DocsBackgroundBeams>
+
+<SectionDivider />
+
+## 📋 Implementation Guidelines
+
+### Best Practices for Using These Components
+
+1. **Purpose-Driven Selection**: Choose components based on the specific documentation challenge you're solving
+2. **Progressive Enhancement**: Start with basic content, then add interactive elements
+3. **Performance Consideration**: Use animations judiciously to maintain fast load times
+4. **Accessibility**: Always provide alternative access methods for interactive content
+5. **Mobile-First**: Design for mobile devices first, then enhance for larger screens
+
+### Component Integration Patterns
+
+<CodeExample
+  title="Typical Page Structure"
+  description="Recommended pattern for using multiple components together"
+  code={`// Page Header
+<DocsHero 
+  title="Feature Documentation"
+  description="Complete guide to using this feature"
+  primaryCTA={{ text: "Get Started", href: "#quick-start" }}
+/>
+
+// Content Organization  
+<FeatureShowcase
+  title="Key Capabilities" 
+  features={featureList}
+/>
+
+// Interactive Learning
+<QuickStart
+  title="Setup Guide"
+  steps={setupSteps}
+/>
+
+// Technical Reference
+<APIReference
+  endpoint={apiEndpoint}
+  parameters={parameterList}
+/>
+
+// Additional Resources
+<AnimatedBentoGrid>
+  <FeatureBentoItem title="Examples" href="/examples" />
+  <FeatureBentoItem title="Troubleshooting" href="/help" />
+</AnimatedBentoGrid>`}
+  language="jsx"
+  copyable
+/>
+
+<SectionDivider title="Ready to Enhance Your Documentation?" description="Start implementing these components in your own projects" />
+
+## 🚀 Next Steps
+
+1. **Explore the Source Code**: Check out our GitHub repository to see how these components are implemented
+2. **Customize for Your Needs**: Adapt the components to match your brand and content requirements  
+3. **Contribute Improvements**: Help us make these components even better with your feedback and contributions
+4. **Share Your Experience**: Let us know how these components improved your documentation experience
+
+<div className="text-center mt-12">
+  <SimpleTooltip content="Built with ❤️ by the Spectrum Web Co team">
+    <span className="text-lg font-semibold text-gray-600 dark:text-gray-300">
+      State-of-the-art documentation, powered by Aceternity UI
+    </span>
+  </SimpleTooltip>
+</div>

@@ -1,0 +1,272 @@
+# Robots.txt for The Snowflake Terraform Provider for OVHcloud
+# Built by Spectrum Web Co - Enterprise SEO Configuration
+# Last Updated: 2024-12-19
+
+# ============================================
+# General Bot Rules - Allow All Documentation
+# ============================================
+
+User-agent: *
+Allow: /
+
+# ============================================
+# Specific Search Engine Optimizations
+# ============================================
+
+# Google Bot
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Bing Bot
+User-agent: bingbot
+Allow: /
+Crawl-delay: 1
+
+# Yandex Bot
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 2
+
+# Baidu Bot
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 2
+
+# DuckDuckGo Bot
+User-agent: DuckDuckBot
+Allow: /
+Crawl-delay: 1
+
+# ============================================
+# Block Unnecessary Paths
+# ============================================
+
+# Block build artifacts and development files
+Disallow: /.docusaurus/
+Disallow: /build/
+Disallow: /node_modules/
+Disallow: /.git/
+Disallow: /.github/
+Disallow: /src/
+Disallow: /.env
+Disallow: /.env.*
+Disallow: /package.json
+Disallow: /package-lock.json
+Disallow: /yarn.lock
+Disallow: /tsconfig.json
+Disallow: /docusaurus.config.*
+Disallow: /sidebars.*
+Disallow: /babel.config.js
+Disallow: /postcss.config.js
+Disallow: /tailwind.config.js
+
+# Block temporary and cache files
+Disallow: /tmp/
+Disallow: /cache/
+Disallow: /.cache/
+Disallow: /temp/
+Disallow: /*.log
+Disallow: /*.tmp
+
+# Block admin and private areas
+Disallow: /admin/
+Disallow: /private/
+Disallow: /internal/
+Disallow: /_private/
+Disallow: /draft/
+Disallow: /test/
+Disallow: /staging/
+
+# Block duplicate content and parameters
+Disallow: /*?*utm_source=
+Disallow: /*?*utm_medium=
+Disallow: /*?*utm_campaign=
+Disallow: /*?*utm_term=
+Disallow: /*?*utm_content=
+Disallow: /*?*fbclid=
+Disallow: /*?*gclid=
+
+# Block print versions and unnecessary formats
+Disallow: /*/print/
+Disallow: /*.pdf$
+Disallow: /print/
+
+# ============================================
+# Explicitly Allow Important Resources
+# ============================================
+
+# Allow static assets for proper rendering
+Allow: /css/
+Allow: /js/
+Allow: /img/
+Allow: /assets/
+Allow: /static/
+Allow: /fonts/
+
+# Allow important files
+Allow: /favicon.ico
+Allow: /manifest.json
+Allow: /robots.txt
+Allow: /sitemap.xml
+Allow: /sitemap*.xml
+
+# Allow documentation paths
+Allow: /docs/
+Allow: /api/
+Allow: /community/
+Allow: /blog/
+Allow: /examples/
+
+# ============================================
+# Social Media and AI Crawlers
+# ============================================
+
+# Facebook Bot
+User-agent: facebookexternalhit
+Allow: /
+Crawl-delay: 1
+
+# Twitter Bot
+User-agent: Twitterbot
+Allow: /
+Crawl-delay: 1
+
+# LinkedIn Bot
+User-agent: LinkedInBot
+Allow: /
+Crawl-delay: 1
+
+# Discord Bot
+User-agent: Discordbot
+Allow: /
+
+# Slack Bot
+User-agent: Slackbot-LinkExpanding
+Allow: /
+
+# WhatsApp Bot
+User-agent: WhatsApp
+Allow: /
+
+# Telegram Bot
+User-agent: TelegramBot
+Allow: /
+
+# ============================================
+# AI and Research Crawlers
+# ============================================
+
+# OpenAI GPT Bot
+User-agent: GPTBot
+Allow: /docs/
+Allow: /api/
+Allow: /examples/
+Disallow: /
+
+# Anthropic Claude Bot
+User-agent: ClaudeBot
+Allow: /docs/
+Allow: /api/
+Allow: /examples/
+Disallow: /
+
+# Google Bard/Gemini
+User-agent: Google-Extended
+Allow: /docs/
+Allow: /api/
+Allow: /examples/
+Disallow: /
+
+# Common AI Research Bots
+User-agent: CCBot
+Allow: /docs/
+Allow: /api/
+Allow: /examples/
+Disallow: /
+
+# ============================================
+# Archive and Research Crawlers
+# ============================================
+
+# Internet Archive
+User-agent: ia_archiver
+Allow: /
+Crawl-delay: 3
+
+# Archive.org
+User-agent: archive.org_bot
+Allow: /
+Crawl-delay: 3
+
+# ============================================
+# Block Malicious or Aggressive Crawlers
+# ============================================
+
+# Block known aggressive crawlers
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MegaIndex.ru
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+# Block spam bots
+User-agent: EmailCollector
+Disallow: /
+
+User-agent: EmailSiphon
+Disallow: /
+
+User-agent: WebBandit
+Disallow: /
+
+User-agent: EmailWolf
+Disallow: /
+
+# ============================================
+# Sitemap and Additional Information
+# ============================================
+
+# Primary sitemap location
+Sitemap: https://swcstudio.github.io/terraform-provider-ovh-snowflake/sitemap.xml
+
+# Additional sitemaps
+Sitemap: https://swcstudio.github.io/terraform-provider-ovh-snowflake/sitemap-0.xml
+
+# ============================================
+# Host and Additional Directives
+# ============================================
+
+# Preferred domain
+Host: https://swcstudio.github.io
+
+# Request rate limiting for all bots
+Request-rate: 1/1s
+
+# ============================================
+# Notes for Developers
+# ============================================
+# 
+# This robots.txt is optimized for:
+# - Maximum SEO visibility for documentation
+# - Protection of development and build artifacts
+# - Appropriate crawling rates to prevent server overload
+# - Support for social media link previews
+# - Controlled access for AI training bots
+# 
+# Last reviewed: 2024-12-19
+# Maintained by: Spectrum Web Co
+# Contact: https://github.com/swcstudio/terraform-provider-ovh-snowflake/issues
+#

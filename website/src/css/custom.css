@@ -1,0 +1,1073 @@
+/* Tailwind CSS imports */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Custom CSS for OVH Snowflake Terraform Provider Documentation
+ * Professional styling with Snowflake blue primary, Mona Sans typography, and Motion-ready animations
+ * Built by Spectrum Web Co for state-of-the-art user experience
+ */
+
+/* Import Mona Sans font */
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('/fonts/Mona-Sans.var.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* CSS Custom Properties for Spectrum Web Co x Snowflake x OVH unified theming */
+:root {
+  /* Primary Colors - Snowflake Blue (now primary) */
+  --ifm-color-primary: #29b5e8;
+  --ifm-color-primary-dark: #1aa3d1;
+  --ifm-color-primary-darker: #189bc5;
+  --ifm-color-primary-darkest: #1480a2;
+  --ifm-color-primary-light: #3bbdeb;
+  --ifm-color-primary-lighter: #47c1ed;
+  --ifm-color-primary-lightest: #65ccf1;
+
+  /* Secondary Colors - OVH Blue (now secondary/accent) */
+  --ifm-color-secondary: #4a5fff;
+  --ifm-color-secondary-dark: #3a4fff;
+  --ifm-color-secondary-darker: #2a3fff;
+  --ifm-color-secondary-darkest: #1a2fff;
+  --ifm-color-secondary-light: #5a6fff;
+  --ifm-color-secondary-lighter: #6a7fff;
+  --ifm-color-secondary-lightest: #7a8fff;
+
+  /* Spectrum Web Co Accent Colors */
+  --swc-purple: #6c5ce7;
+  --swc-blue: #74b9ff;
+  --swc-gradient: linear-gradient(135deg, #29b5e8 0%, #4a5fff 50%, #6c5ce7 100%);
+  
+  /* Motion-optimized animation variables */
+  --motion-duration-fast: 0.2s;
+  --motion-duration-normal: 0.4s;
+  --motion-duration-slow: 0.8s;
+  --motion-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-easing-enter: cubic-bezier(0, 0, 0.2, 1);
+  --motion-easing-exit: cubic-bezier(0.4, 0, 1, 1);
+  
+  /* Banner and layout */
+  --banner-height: 80px;
+  --banner-bg: var(--swc-gradient);
+
+  /* Success, Warning, Danger */
+  --ifm-color-success: #00d4aa;
+  --ifm-color-warning: #fdcb6e;
+  --ifm-color-danger: #e17055;
+
+  /* Neutral Colors */
+  --ifm-color-gray-0: #ffffff;
+  --ifm-color-gray-100: #f8f9fa;
+  --ifm-color-gray-200: #e9ecef;
+  --ifm-color-gray-300: #dee2e6;
+  --ifm-color-gray-400: #ced4da;
+  --ifm-color-gray-500: #adb5bd;
+  --ifm-color-gray-600: #6c757d;
+  --ifm-color-gray-700: #495057;
+  --ifm-color-gray-800: #343a40;
+  --ifm-color-gray-900: #212529;
+
+  /* Typography - Mona Sans primary */
+  --ifm-font-family-base: 'Mona Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Noto Sans', sans-serif;
+  --ifm-font-family-monospace: 'JetBrains Mono', 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', 'Source Code Pro', monospace;
+  
+  --ifm-font-size-base: 16px;
+  --ifm-line-height-base: 1.6;
+  --ifm-font-weight-light: 300;
+  --ifm-font-weight-normal: 400;
+  --ifm-font-weight-semibold: 500;
+  --ifm-font-weight-bold: 600;
+  --ifm-font-weight-bolder: 700;
+
+  /* Responsive spacing system */
+  --ifm-spacing-horizontal: clamp(1rem, 4vw, 2rem);
+  --ifm-spacing-vertical: clamp(1rem, 4vh, 2rem);
+  --ifm-global-radius: clamp(8px, 1vw, 12px);
+  --ifm-global-border-width: 1px;
+
+  /* Shadows with motion-friendly values */
+  --ifm-global-shadow-lw: 0 1px 2px 0 rgba(41, 181, 232, 0.1);
+  --ifm-global-shadow-md: 0 4px 6px -1px rgba(41, 181, 232, 0.1), 0 2px 4px -1px rgba(41, 181, 232, 0.06);
+  --ifm-global-shadow-tl: 0 10px 15px -3px rgba(41, 181, 232, 0.1), 0 4px 6px -2px rgba(41, 181, 232, 0.05);
+
+  /* Code styling */
+  --ifm-code-font-size: 0.875em;
+  --ifm-code-background: #f6f8fa;
+  --ifm-code-border-radius: 4px;
+  --ifm-code-padding-horizontal: 0.4rem;
+  --ifm-code-padding-vertical: 0.2rem;
+
+  /* Motion-optimized transitions */
+  --ifm-transition-fast: var(--motion-duration-fast) var(--motion-easing-standard);
+  --ifm-transition-slow: var(--motion-duration-normal) var(--motion-easing-standard);
+}
+
+/* Dark theme overrides - Enhanced Spectrum Web Co palette */
+[data-theme='dark'] {
+  --ifm-color-primary: #47c1ed;
+  --ifm-color-primary-dark: #29b5e8;
+  --ifm-color-primary-darker: #1aa3d1;
+  --ifm-color-primary-darkest: #1480a2;
+  --ifm-color-primary-light: #65ccf1;
+  --ifm-color-primary-lighter: #81d4fa;
+  --ifm-color-primary-lightest: #b3e5fc;
+
+  --ifm-color-secondary: #6a7fff;
+  --ifm-color-secondary-dark: #5a6fff;
+  --ifm-color-secondary-darker: #4a5fff;
+  --ifm-color-secondary-darkest: #3a4fff;
+
+  --ifm-code-background: #374151;
+  --ifm-background-color: #64748b;
+  --ifm-background-surface-color: #475569;
+  --ifm-navbar-background-color: #4a5fff;
+  --ifm-navbar-link-color: #ffffff;
+  --ifm-navbar-link-hover-color: #e2e8f0;
+  --ifm-sidebar-background-color: #64748b;
+  
+  /* Dark mode Spectrum Web Co accents */
+  --swc-purple: #a29bfe;
+  --swc-blue: #81ecec;
+  --swc-gradient: linear-gradient(135deg, #47c1ed 0%, #6a7fff 50%, #a29bfe 100%);
+}
+</text>
+
+<old_text>
+.navbar {
+  box-shadow: var(--ifm-global-shadow-md);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: var(--ifm-transition-fast);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+[data-theme='dark'] .navbar {
+  background: rgba(30, 30, 30, 0.95);
+}
+
+/* Global styles with motion optimization */
+html {
+  scroll-behavior: smooth;
+  font-feature-settings: 'liga' 1, 'calt' 1;
+}
+
+body {
+  font-family: var(--ifm-font-family-base);
+  font-feature-settings: 'liga' 1, 'calt' 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Motion-ready base elements */
+* {
+  transition: var(--ifm-transition-fast);
+}
+
+/* Spectrum Web Co hero with unified Snowflake/OVH gradient */
+.hero--primary {
+  background: var(--swc-gradient);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  min-height: clamp(500px, 70vh, 800px);
+}
+
+.hero--primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="snowflake" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23snowflake)"/></svg>');
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.hero__title {
+  font-family: var(--ifm-font-family-base);
+  font-weight: var(--ifm-font-weight-bolder);
+  font-size: clamp(2rem, 8vw, 3.5rem);
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(45deg, #ffffff, #f8f9fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.hero__subtitle {
+  font-family: var(--ifm-font-family-base);
+  font-size: clamp(1rem, 4vw, 1.25rem);
+  font-weight: var(--ifm-font-weight-normal);
+  opacity: 0.9;
+  max-width: min(600px, 90vw);
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* Enhanced code blocks with motion support */
+.prism-code {
+  border-radius: var(--ifm-global-radius);
+  box-shadow: var(--ifm-global-shadow-md);
+  font-size: var(--ifm-code-font-size);
+  line-height: 1.5;
+  transition: var(--ifm-transition-slow);
+}
+
+.prism-code:hover {
+  box-shadow: var(--ifm-global-shadow-tl);
+  transform: translateY(-2px);
+}
+
+.token.title {
+  color: var(--ifm-color-primary);
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+.token.property {
+  color: var(--ifm-color-secondary);
+}
+
+.token.string {
+  color: var(--ifm-color-success);
+}
+
+/* Inline code styling */
+code {
+  background: var(--ifm-code-background);
+  border: var(--ifm-global-border-width) solid var(--ifm-color-gray-300);
+  border-radius: var(--ifm-code-border-radius);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--ifm-code-font-size);
+  padding: var(--ifm-code-padding-vertical) var(--ifm-code-padding-horizontal);
+}
+
+/* Enhanced navbar with Spectrum Web Co branding */
+.navbar {
+  box-shadow: var(--ifm-global-shadow-md);
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid transparent;
+  background: #4a5fff;
+  transition: var(--ifm-transition-slow);
+  color: white;
+}
+
+[data-theme='dark'] .navbar {
+  background: #4a5fff;
+  color: white;
+}
+
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--ifm-font-family-base);
+}
+
+.navbar__title {
+  font-weight: var(--ifm-font-weight-bold);
+  color: white !important;
+  font-family: var(--ifm-font-family-base);
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+}
+
+.navbar__title::after {
+  content: " by Spectrum Web Co";
+  font-size: 0.75em;
+  font-weight: var(--ifm-font-weight-normal);
+  opacity: 0.8;
+  margin-left: 0.5rem;
+}
+
+.navbar__item {
+  font-weight: var(--ifm-font-weight-semibold);
+  font-family: var(--ifm-font-family-base);
+}
+
+.navbar__link {
+  color: white !important;
+}
+
+.navbar__link:hover {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Enhanced sidebar with motion support */
+.theme-doc-sidebar-container {
+  border-right: var(--ifm-global-border-width) solid var(--ifm-color-gray-200);
+}
+
+.menu__link {
+  border-radius: var(--ifm-global-radius);
+  transition: all var(--ifm-transition-fast);
+  font-family: var(--ifm-font-family-base);
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  margin: 0.25rem 0;
+  font-weight: var(--ifm-font-weight-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.menu__link:hover {
+  background: #4a5fff;
+  color: white;
+  transform: translateX(4px);
+  box-shadow: var(--ifm-global-shadow-md);
+}
+
+[data-theme='dark'] .menu__link:hover {
+  background: #29b5e8;
+  color: white;
+}
+
+.menu__link--active {
+  background: linear-gradient(90deg, var(--ifm-color-primary), var(--ifm-color-secondary));
+  color: white;
+  font-weight: var(--ifm-font-weight-semibold);
+  transform: translateX(2px);
+}
+
+.menu__link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  background: #4a5fff;
+  transition: width var(--ifm-transition-fast);
+  z-index: -1;
+}
+
+[data-theme='dark'] .menu__link::before {
+  background: #29b5e8;
+}
+
+.menu__link:hover::before {
+  width: 100%;
+}
+
+.menu__list {
+  padding: 0.5rem 0;
+}
+
+.menu__list-item {
+  margin: 0.25rem 0;
+}
+
+/* Enhanced cards with motion */
+.card {
+  border-radius: var(--ifm-global-radius);
+  box-shadow: var(--ifm-global-shadow-md);
+  transition: all var(--ifm-transition-slow);
+  border: var(--ifm-global-border-width) solid var(--ifm-color-gray-200);
+}
+
+.card:hover {
+  box-shadow: var(--ifm-global-shadow-tl);
+  transform: translateY(-2px);
+}
+
+.card__header {
+  background: linear-gradient(135deg, var(--ifm-color-gray-100), var(--ifm-color-gray-50));
+  border-bottom: var(--ifm-global-border-width) solid var(--ifm-color-gray-200);
+}
+
+/* Enhanced buttons with Spectrum Web Co styling */
+.button {
+  border-radius: var(--ifm-global-radius);
+  font-weight: var(--ifm-font-weight-semibold);
+  font-family: var(--ifm-font-family-base);
+  transition: all var(--ifm-transition-fast);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 4vw, 1.5rem);
+}
+
+.button--primary {
+  background: var(--swc-gradient);
+  border: none;
+  box-shadow: var(--ifm-global-shadow-md);
+  color: white;
+}
+
+.button--primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.button--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--ifm-global-shadow-tl);
+}
+
+.button--primary:hover::before {
+  left: 100%;
+}
+
+.button--secondary {
+  background: var(--ifm-color-gray-100);
+  border: var(--ifm-global-border-width) solid var(--ifm-color-gray-300);
+  color: var(--ifm-color-gray-800);
+}
+
+.button--secondary:hover {
+  background: var(--ifm-color-gray-200);
+  border-color: var(--ifm-color-gray-400);
+  color: var(--ifm-color-gray-900);
+}
+
+/* Enhanced admonitions */
+.admonition {
+  border-radius: var(--ifm-global-radius);
+  box-shadow: var(--ifm-global-shadow-lw);
+  border-left: 4px solid;
+  transition: var(--ifm-transition-slow);
+}
+
+.admonition:hover {
+  transform: translateX(4px);
+}
+
+.admonition-heading {
+  font-weight: var(--ifm-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--ifm-font-family-base);
+}
+
+.admonition-icon {
+  margin-right: 0.5rem;
+}
+
+/* Custom terraform provider styling */
+.terraform-resource {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border: var(--ifm-global-border-width) solid var(--ifm-color-gray-300);
+  border-radius: var(--ifm-global-radius);
+  padding: 1.5rem;
+  margin: 1rem 0;
+  transition: var(--ifm-transition-slow);
+}
+
+.terraform-resource:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ifm-global-shadow-md);
+}
+
+.terraform-resource h3 {
+  color: var(--ifm-color-primary);
+  margin-bottom: 0.5rem;
+  font-weight: var(--ifm-font-weight-bold);
+  font-family: var(--ifm-font-family-base);
+}
+
+.terraform-example {
+  background: var(--ifm-code-background);
+  border-radius: var(--ifm-global-radius);
+  border: var(--ifm-global-border-width) solid var(--ifm-color-gray-300);
+  overflow: hidden;
+  transition: var(--ifm-transition-slow);
+}
+
+.terraform-example:hover {
+  box-shadow: var(--ifm-global-shadow-md);
+}
+
+.terraform-example-header {
+  background: var(--ifm-color-primary);
+  color: white;
+  padding: 0.5rem 1rem;
+  font-weight: var(--ifm-font-weight-semibold);
+  font-size: 0.875rem;
+  font-family: var(--ifm-font-family-base);
+}
+
+/* Enhanced tables with Spectrum Web Co styling */
+.table-wrapper {
+  border-radius: var(--ifm-global-radius);
+  overflow: hidden;
+  box-shadow: var(--ifm-global-shadow-md);
+  border: 1px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              var(--swc-gradient) border-box;
+  transition: var(--ifm-transition-slow);
+}
+
+.table-wrapper:hover {
+  box-shadow: var(--ifm-global-shadow-tl);
+}
+
+[data-theme='dark'] .table-wrapper {
+  background: linear-gradient(var(--ifm-background-surface-color), var(--ifm-background-surface-color)) padding-box,
+              var(--swc-gradient) border-box;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: var(--ifm-font-family-base);
+}
+
+th {
+  background: var(--swc-gradient);
+  color: white;
+  font-weight: var(--ifm-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
+  position: relative;
+  font-family: var(--ifm-font-family-base);
+}
+
+tr:nth-child(even) {
+  background: var(--ifm-color-gray-50);
+}
+
+tr:hover {
+  background: var(--ifm-color-gray-100);
+  transition: background var(--ifm-transition-fast);
+}
+
+/* Enhanced footer */
+.footer {
+  background: linear-gradient(135deg, #2d3436, #636e72);
+  color: var(--ifm-color-gray-200);
+  position: relative;
+  font-family: var(--ifm-font-family-base);
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--swc-gradient);
+}
+
+.footer__title {
+  color: white;
+  font-weight: var(--ifm-font-weight-bold);
+  font-family: var(--ifm-font-family-base);
+}
+
+.footer__link-item:hover {
+  color: var(--ifm-color-primary);
+  transition: color var(--ifm-transition-fast);
+}
+
+/* Banner placeholder styling */
+.banner-placeholder {
+  height: var(--banner-height);
+  background: var(--banner-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: var(--ifm-font-weight-bold);
+  font-size: clamp(0.875rem, 3vw, 1.1rem);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+  font-family: var(--ifm-font-family-base);
+}
+
+.banner-placeholder::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+  opacity: 0.3;
+}
+
+.banner-placeholder span {
+  position: relative;
+  z-index: 1;
+}
+
+/* Spectrum Web Co branding elements */
+.swc-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: var(--ifm-font-weight-semibold);
+  color: var(--swc-purple);
+  font-family: var(--ifm-font-family-base);
+}
+
+.swc-badge {
+  background: var(--swc-gradient);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: var(--ifm-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: var(--ifm-global-shadow-md);
+  font-family: var(--ifm-font-family-base);
+}
+
+/* Motion-ready classes for animations */
+.motion-safe {
+  will-change: transform, opacity;
+}
+
+.motion-reduce-safe {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Version badge styling */
+.badge {
+  border-radius: 12px;
+  font-weight: var(--ifm-font-weight-semibold);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  font-family: var(--ifm-font-family-base);
+}
+
+.badge--primary {
+  background: var(--ifm-color-primary);
+  color: white;
+}
+
+.badge--secondary {
+  background: var(--ifm-color-secondary);
+  color: white;
+}
+
+/* Custom icon styling */
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.icon--terraform {
+  color: #623ce4;
+}
+
+.icon--snowflake {
+  color: #29b5e8;
+}
+
+.icon--ovh {
+  color: #4a5fff;
+}
+
+/* Mobile-first responsive design optimizations */
+@media (max-width: 480px) {
+  .hero__title {
+    font-size: clamp(1.5rem, 10vw, 2.5rem);
+    line-height: 1.1;
+  }
+  
+  .hero__subtitle {
+    font-size: clamp(0.875rem, 4vw, 1rem);
+  }
+  
+  .navbar__title {
+    font-size: 1rem;
+  }
+  
+  .button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .banner-placeholder {
+    font-size: 0.875rem;
+    padding: 0 1rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --ifm-spacing-horizontal: 1rem;
+    --ifm-spacing-vertical: 1rem;
+  }
+  
+  .hero--primary {
+    min-height: 400px;
+  }
+  
+  .navbar__brand {
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 996px) {
+  .hero__title {
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+  
+  .container {
+    max-width: none;
+    padding: 0 1rem;
+  }
+}
+
+/* High-resolution displays */
+@media (min-resolution: 2dppx) {
+  .hero--primary::before {
+    background-size: 20px 20px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .navbar,
+  .footer,
+  .theme-doc-sidebar-container,
+  .pagination-nav,
+  .banner-placeholder {
+    display: none !important;
+  }
+  
+  .main-wrapper {
+    margin-left: 0 !important;
+  }
+  
+  .container {
+    max-width: none !important;
+  }
+  
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .motion-reduce-safe {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* Focus styles for better accessibility */
+button:focus,
+a:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --ifm-color-primary: #0066cc;
+    --ifm-color-secondary: #004499;
+    --ifm-global-border-width: 2px;
+  }
+}
+
+/* Touch-friendly sizing for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .navbar__link {
+    padding: 1rem;
+  }
+  
+  .menu__link {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Landscape mobile optimizations */
+@media (max-height: 480px) and (orientation: landscape) {
+  .hero--primary {
+    min-height: 300px;
+  }
+
+  .hero__title {
+    font-size: 2rem;
+  }
+
+  .banner-placeholder {
+    --banner-height: 60px;
+  }
+}
+
+/* ========================================
+   Mermaid Diagram Styling
+   Transparent backgrounds and dark mode support
+   ======================================== */
+
+/* Base Mermaid container styling */
+.mermaid {
+  background: transparent !important;
+  border-radius: var(--ifm-global-radius);
+  padding: 1rem;
+  margin: 1.5rem 0;
+  overflow: visible;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+/* Ensure all SVG backgrounds are transparent */
+.mermaid svg {
+  background: transparent !important;
+  background-color: transparent !important;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Light mode Mermaid styling */
+[data-theme='light'] .mermaid {
+  /* Override any background colors */
+  background: transparent !important;
+}
+
+[data-theme='light'] .mermaid svg {
+  background: transparent !important;
+}
+
+/* Force transparent backgrounds for all mermaid elements in light mode */
+[data-theme='light'] .mermaid .node rect,
+[data-theme='light'] .mermaid .node circle,
+[data-theme='light'] .mermaid .node ellipse,
+[data-theme='light'] .mermaid .node polygon {
+  fill: rgba(74, 95, 255, 0.1) !important;
+  stroke: #4a5fff !important;
+  stroke-width: 2px !important;
+}
+
+[data-theme='light'] .mermaid .edgePath path {
+  stroke: #6b7280 !important;
+  stroke-width: 2px !important;
+}
+
+[data-theme='light'] .mermaid .edgeLabel {
+  background-color: transparent !important;
+  color: #1f2937 !important;
+}
+
+[data-theme='light'] .mermaid text {
+  fill: #1f2937 !important;
+  font-family: var(--ifm-font-family-base) !important;
+}
+
+/* Dark mode Mermaid styling */
+[data-theme='dark'] .mermaid {
+  background: transparent !important;
+}
+
+[data-theme='dark'] .mermaid svg {
+  background: transparent !important;
+}
+
+/* Force transparent backgrounds for all mermaid elements in dark mode */
+[data-theme='dark'] .mermaid .node rect,
+[data-theme='dark'] .mermaid .node circle,
+[data-theme='dark'] .mermaid .node ellipse,
+[data-theme='dark'] .mermaid .node polygon {
+  fill: rgba(106, 127, 255, 0.2) !important;
+  stroke: #6a7fff !important;
+  stroke-width: 2px !important;
+}
+
+[data-theme='dark'] .mermaid .edgePath path {
+  stroke: #9ca3af !important;
+  stroke-width: 2px !important;
+}
+
+[data-theme='dark'] .mermaid .edgeLabel {
+  background-color: transparent !important;
+  color: #f9fafb !important;
+}
+
+[data-theme='dark'] .mermaid text {
+  fill: #f9fafb !important;
+  font-family: var(--ifm-font-family-base) !important;
+}
+
+/* Cluster (subgraph) styling */
+[data-theme='light'] .mermaid .cluster rect {
+  fill: rgba(74, 95, 255, 0.05) !important;
+  stroke: rgba(74, 95, 255, 0.3) !important;
+  stroke-width: 1px !important;
+  stroke-dasharray: 5,5 !important;
+}
+
+[data-theme='dark'] .mermaid .cluster rect {
+  fill: rgba(106, 127, 255, 0.1) !important;
+  stroke: rgba(106, 127, 255, 0.4) !important;
+  stroke-width: 1px !important;
+  stroke-dasharray: 5,5 !important;
+}
+
+/* Flowchart specific styling */
+[data-theme='light'] .mermaid .flowchart-link {
+  stroke: #6b7280 !important;
+  fill: none !important;
+}
+
+[data-theme='dark'] .mermaid .flowchart-link {
+  stroke: #9ca3af !important;
+  fill: none !important;
+}
+
+/* Sequence diagram styling */
+[data-theme='light'] .mermaid .actor {
+  fill: rgba(74, 95, 255, 0.1) !important;
+  stroke: #4a5fff !important;
+}
+
+[data-theme='dark'] .mermaid .actor {
+  fill: rgba(106, 127, 255, 0.2) !important;
+  stroke: #6a7fff !important;
+}
+
+[data-theme='light'] .mermaid .activation0,
+[data-theme='light'] .mermaid .activation1,
+[data-theme='light'] .mermaid .activation2 {
+  fill: rgba(41, 181, 232, 0.1) !important;
+  stroke: #29b5e8 !important;
+}
+
+[data-theme='dark'] .mermaid .activation0,
+[data-theme='dark'] .mermaid .activation1,
+[data-theme='dark'] .mermaid .activation2 {
+  fill: rgba(71, 193, 237, 0.2) !important;
+  stroke: #47c1ed !important;
+}
+
+/* Gantt chart styling */
+[data-theme='light'] .mermaid .section0,
+[data-theme='light'] .mermaid .section1,
+[data-theme='light'] .mermaid .section2,
+[data-theme='light'] .mermaid .section3 {
+  fill: rgba(74, 95, 255, 0.1) !important;
+}
+
+[data-theme='dark'] .mermaid .section0,
+[data-theme='dark'] .mermaid .section1,
+[data-theme='dark'] .mermaid .section2,
+[data-theme='dark'] .mermaid .section3 {
+  fill: rgba(106, 127, 255, 0.2) !important;
+}
+
+/* Grid lines */
+[data-theme='light'] .mermaid .grid .tick {
+  stroke: rgba(107, 114, 128, 0.2) !important;
+}
+
+[data-theme='dark'] .mermaid .grid .tick {
+  stroke: rgba(156, 163, 175, 0.2) !important;
+}
+
+/* Labels and titles */
+[data-theme='light'] .mermaid .titleText {
+  fill: #1f2937 !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+}
+
+[data-theme='dark'] .mermaid .titleText {
+  fill: #f9fafb !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    padding: 0.5rem;
+    margin: 1rem 0;
+    font-size: 12px;
+  }
+  
+  .mermaid svg {
+    max-width: calc(100vw - 2rem);
+  }
+}
+
+/* Print styles for Mermaid */
+@media print {
+  .mermaid {
+    background: white !important;
+  }
+  
+  .mermaid svg {
+    background: white !important;
+  }
+  
+  .mermaid text {
+    fill: black !important;
+  }
+  
+  .mermaid .node rect,
+  .mermaid .node circle,
+  .mermaid .node ellipse,
+  .mermaid .node polygon {
+    fill: white !important;
+    stroke: black !important;
+  }
+}
+
+/* Animation for mermaid diagrams when they come into view */
+.mermaid {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.mermaid.loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .mermaid {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

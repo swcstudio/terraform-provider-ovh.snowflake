@@ -1,0 +1,64 @@
+graph TB
+    subgraph "User Environment"
+        A[Terraform Configuration] --> B[OVH Snowflake Provider]
+        A1[terraform.tf] --> A
+        A2[variables.tf] --> A
+        A3[terraform.tfvars] --> A
+    end
+    
+    subgraph "Provider Core"
+        B --> C[Configuration Parser]
+        C --> D[Authentication Manager]
+        D --> E[Resource Factory]
+        E --> F[API Client Pool]
+    end
+    
+    subgraph "OVH Infrastructure"
+        F --> G[OVH API Gateway]
+        G --> H[OVH Cloud Services]
+        H --> I[Enhanced Security Layer]
+        H --> J[Performance Optimization]
+        H --> K[Monitoring & Logging]
+        H --> L[Load Balancing]
+    end
+    
+    subgraph "Snowflake Cloud"
+        F --> M[Snowflake REST API]
+        M --> N[Snowflake Account]
+        N --> O[Compute Layer]
+        N --> P[Storage Layer]
+        N --> Q[Metadata Layer]
+    end
+    
+    subgraph "Resource Types"
+        R1[ovh-snowflake_snowflake_account]
+        E --> R1
+    end
+    
+    subgraph "Data Sources"
+        DS1[ovh-snowflake_snowflake_accounts]
+        E --> DS1
+    end
+    
+    subgraph "State Management"
+        S1[Terraform State]
+        S2[State Backend]
+        S3[State Locking]
+        S1 --> S2
+        S2 --> S3
+    end
+    
+    E --> S1
+    
+    classDef ovh fill:#00185c,stroke:#333,stroke-width:2px,color:#fff
+    classDef snowflake fill:#29b5e8,stroke:#333,stroke-width:2px,color:#fff
+    classDef resource fill:#00d4aa,stroke:#333,stroke-width:2px,color:#fff
+    classDef terraform fill:#623ce4,stroke:#333,stroke-width:2px,color:#fff
+    classDef state fill:#ff9800,stroke:#333,stroke-width:2px,color:#fff
+    
+    class G,H,I,J,K,L ovh
+    class M,N,O,P,Q snowflake
+    class R1 resource
+    class DS1 resource
+    class A,A1,A2,A3 terraform
+    class S1,S2,S3 state

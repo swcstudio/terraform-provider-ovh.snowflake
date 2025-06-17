@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- SEO Meta Tags -->
+    <title>Offline - The Snowflake Terraform Provider for OVHcloud</title>
+    <meta name="description" content="You're currently offline. The OVH Snowflake Terraform Provider documentation will be available when your connection is restored.">
+    <meta name="keywords" content="terraform, provider, ovh, snowflake, offline, documentation">
+    <meta name="author" content="Spectrum Web Co">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Offline - OVH Snowflake Terraform Provider">
+    <meta property="og:description" content="Documentation temporarily unavailable - you're currently offline">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="OVH Snowflake Terraform Provider">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Offline - OVH Snowflake Terraform Provider">
+    <meta name="twitter:description" content="Documentation temporarily unavailable - you're currently offline">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#4a5fff">
+    <meta name="msapplication-TileColor" content="#4a5fff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="OVH Snowflake Provider">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/terraform-provider-ovh-snowflake/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/terraform-provider-ovh-snowflake/img/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/terraform-provider-ovh-snowflake/img/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/terraform-provider-ovh-snowflake/img/apple-touch-icon.png">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="/terraform-provider-ovh-snowflake/fonts/Mona-Sans.var.woff2" as="font" type="font/woff2" crossorigin>
+    
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Font Face */
+        @font-face {
+            font-family: 'Mona Sans';
+            src: url('/terraform-provider-ovh-snowflake/fonts/Mona-Sans.var.woff2') format('woff2-variations');
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        /* CSS Custom Properties */
+        :root {
+            --primary-color: #4a5fff;
+            --secondary-color: #29b5e8;
+            --accent-color: #6c5ce7;
+            --background-color: #ffffff;
+            --surface-color: #f8fafc;
+            --text-color: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --gradient: linear-gradient(135deg, #29b5e8 0%, #4a5fff 50%, #6c5ce7 100%);
+        }
+        
+        /* Dark theme support */
+        [data-theme='dark'] {
+            --primary-color: #6a7fff;
+            --secondary-color: #47c1ed;
+            --accent-color: #a29bfe;
+            --background-color: #64748b;
+            --surface-color: #475569;
+            --text-color: #f9fafb;
+            --text-muted: #d1d5db;
+            --border-color: #374151;
+            --gradient: linear-gradient(135deg, #47c1ed 0%, #6a7fff 50%, #a29bfe 100%);
+        }
+        
+        /* Auto dark mode detection */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #6a7fff;
+                --secondary-color: #47c1ed;
+                --accent-color: #a29bfe;
+                --background-color: #64748b;
+                --surface-color: #475569;
+                --text-color: #f9fafb;
+                --text-muted: #d1d5db;
+                --border-color: #374151;
+                --gradient: linear-gradient(135deg, #47c1ed 0%, #6a7fff 50%, #a29bfe 100%);
+            }
+        }
+        
+        /* Base Styles */
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Mona Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Noto Sans', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            width: 100%;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+        
+        .brand-text {
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+        
+        .brand-subtitle {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+        
+        .status-badge {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        /* Main Content */
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, var(--background-color) 0%, var(--surface-color) 100%);
+        }
+        
+        .offline-card {
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .offline-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient);
+        }
+        
+        .offline-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        .offline-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+        
+        .offline-description {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+        
+        .offline-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 140px;
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .connection-status {
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .status-offline {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        .status-online {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .status-checking {
+            background: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .footer-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+        
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.75rem;
+            }
+            
+            .offline-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .offline-title {
+                font-size: 1.5rem;
+            }
+            
+            .offline-description {
+                font-size: 1rem;
+            }
+            
+            .footer-links {
+                gap: 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .offline-card {
+                padding: 1.5rem 1rem;
+            }
+            
+            .offline-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+        
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Print Styles */
+        @media print {
+            .header, .footer {
+                display: none;
+            }
+            
+            .main {
+                padding: 1rem 0;
+            }
+            
+            .offline-card {
+                box-shadow: none;
+                border: 2px solid #000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">SF</div>
+                    <div>
+                        <div class="brand-text">The Snowflake Terraform Provider for OVHcloud</div>
+                        <div class="brand-subtitle">by Spectrum Web Co</div>
+                    </div>
+                </div>
+                <div class="status-badge" id="statusBadge">
+                    🔴 Offline
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <div class="offline-card">
+                <div class="offline-icon">
+                    📶
+                </div>
+                
+                <h1 class="offline-title">You're Offline</h1>
+                
+                <p class="offline-description">
+                    It looks like you've lost your internet connection. Don't worry – some content may still be available from your cache, and we'll automatically reconnect you when your connection is restored.
+                </p>
+                
+                <div class="offline-actions">
+                    <button class="btn btn-primary" onclick="checkConnection()" id="retryBtn">
+                        <span id="retryIcon">🔄</span>
+                        <span id="retryText">Try Again</span>
+                    </button>
+                    
+                    <button class="btn btn-secondary" onclick="goHome()">
+                        🏠 Go to Homepage
+                    </button>
+                </div>
+                
+                <div class="connection-status status-offline" id="connectionStatus">
+                    <span>🔴</span>
+                    <span id="statusText">No internet connection detected</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="/terraform-provider-ovh-snowflake/" class="footer-link">Home</a>
+                    <a href="/terraform-provider-ovh-snowflake/docs/intro" class="footer-link">Documentation</a>
+                    <a href="https://github.com/swcstudio/terraform-provider-ovh-snowflake" class="footer-link" target="_blank" rel="noopener">GitHub</a>
+                    <a href="https://registry.terraform.io/providers/swcstudio/snowflake/latest" class="footer-link" target="_blank" rel="noopener">Terraform Registry</a>
+                </div>
+                <p class="footer-text">
+                    © 2024 Spectrum Web Co. Built with Docusaurus. Offline functionality powered by Service Worker.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Connection status management
+        let isChecking = false;
+        
+        // DOM elements
+        const statusBadge = document.getElementById('statusBadge');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const statusText = document.getElementById('statusText');
+        const retryBtn = document.getElementById('retryBtn');
+        const retryIcon = document.getElementById('retryIcon');
+        const retryText = document.getElementById('retryText');
+        
+        // Check online status
+        function updateConnectionStatus() {
+            const isOnline = navigator.onLine;
+            
+            if (isOnline) {
+                statusBadge.innerHTML = '🟢 Online';
+                connectionStatus.className = 'connection-status status-online';
+                statusText.textContent = 'Connection restored!';
+                
+                // Auto-redirect after a short delay
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                statusBadge.innerHTML = '🔴 Offline';
+                connectionStatus.className = 'connection-status status-offline';
+                statusText.textContent = 'No internet connection detected';
+            }
+        }
+        
+        // Check connection with fetch
+        async function checkConnection() {
+            if (isChecking) return;
+            
+            isChecking = true;
+            retryIcon.innerHTML = '⏳';
+            retryIcon.classList.add('loading-spinner');
+            retryText.textContent = 'Checking...';
+            retryBtn.disabled = true;
+            
+            connectionStatus.className = 'connection-status status-checking';
+            statusText.textContent = 'Checking connection...';
+            
+            try {
+                // Try to fetch a lightweight resource
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch('/terraform-provider-ovh-snowflake/manifest.json', {
+                    method: 'HEAD',
+                    cache: 'no-cache',
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    connectionStatus.className = 'connection-status status-online';
+                    statusText.textContent = 'Connection restored! Redirecting...';
+                    statusBadge.innerHTML = '🟢 Online';
+                    
+                    retryIcon.innerHTML = '✅';
+                    retryText.textContent = 'Connected!';
+                    
+                    // Redirect to the home page
+                    setTimeout(() => {
+                        window.location.href = '/terraform-provider-ovh-snowflake/';
+                    }, 1000);
+                    return;
+                }
+            } catch (error) {
+                console.log('Connection check failed:', error.message);
+            }
+            
+            // Connection failed
+            connectionStatus.className = 'connection-status status-offline';
+            statusText.textContent = 'Still offline. Please check your internet connection.';
+            statusBadge.innerHTML = '🔴 Offline';
+            
+            retryIcon.innerHTML = '🔄';
+            retryIcon.classList.remove('loading-spinner');
+            retryText.textContent = 'Try Again';
+            retryBtn.disabled = false;
+            isChecking = false;
+        }
+        
+        // Navigate to home
+        function goHome() {
+            window.location.href = '/terraform-provider-ovh-snowflake/';
+        }
+        
+        // Listen for online/offline events
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+        
+        // Periodic connection check
+        setInterval(() => {
+            if (!isChecking && !navigator.onLine) {
+                checkConnection();
+            }
+        }, 30000);
+        
+        // Initialize
+        updateConnectionStatus();
+        
+        // Service Worker messaging
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then(registration => {
+                console.log('Service Worker ready');
+            });
+        }
+        
+        // Handle visibility change (tab becomes active)
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && !navigator.onLine) {
+                setTimeout(checkConnection, 1000);
+            }
+        });
+        
+        // Auto-retry on focus
+        window.addEventListener('focus', () => {
+            if (!navigator.onLine) {
+                setTimeout(checkConnection, 500);
+            }
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'r' && (event.ctrlKey || event.metaKey)) {
+                event.preventDefault();
+                checkConnection();
+            } else if (event.key === 'h' && (event.ctrlKey || event.metaKey)) {
+                event.preventDefault();
+                goHome();
+            }
+        });
+        
+        console.log('Offline page loaded. Press Ctrl+R to retry connection, Ctrl+H to go home.');
+    </script>
+</body>
+</html>

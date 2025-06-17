@@ -1,0 +1,81 @@
+erDiagram
+    Account ||--o{ Database : contains
+    Account ||--o{ User : manages
+    Account ||--o{ Role : defines
+    Account ||--o{ Warehouse : provisions
+    
+    Database ||--o{ Schema : contains
+    Database ||--|| ResourceMonitor : monitors
+    
+    Schema ||--o{ Table : contains
+    Schema ||--o{ View : contains
+    Schema ||--o{ Sequence : contains
+    Schema ||--o{ Stage : contains
+    
+    Table ||--o{ Stream : "change capture"
+    Table ||--o{ Task : "operates on"
+    
+    User ||--o{ Role : "granted"
+    Role ||--o{ Grant : "has privileges"
+    
+    Warehouse ||--|| ResourceMonitor : "monitored by"
+    Warehouse ||--o{ Task : "executes"
+    
+    Share ||--o{ Database : "shares"
+    Share ||--o{ Table : "shares"
+    
+    Account {
+        string name
+        string url
+        string region
+        string cloud_provider
+    }
+    
+    Database {
+        string name
+        string comment
+        boolean is_transient
+        string data_retention_time_in_days
+    }
+    
+    Schema {
+        string name
+        string database_name
+        string comment
+        boolean is_transient
+        boolean is_managed
+    }
+    
+    Table {
+        string name
+        string database_name
+        string schema_name
+        string comment
+        json columns
+        string cluster_by
+    }
+    
+    User {
+        string name
+        string login_name
+        string email
+        string password
+        boolean disabled
+        string default_warehouse
+        string default_role
+    }
+    
+    Role {
+        string name
+        string comment
+        string owner
+    }
+    
+    Warehouse {
+        string name
+        string size
+        boolean auto_suspend
+        int auto_resume
+        string comment
+        boolean initially_suspended
+    }

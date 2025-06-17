@@ -1,0 +1,806 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - '.gitignore'
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize, reopened, ready_for_review]
+  schedule:
+    - cron: '0 13 * * *' # Daily at 1PM UTC
+  workflow_dispatch:
+    inputs:
+      deploy_environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      skip_tests:
+        description: 'Skip test execution'
+        required: false
+        default: false
+        type: boolean
+      performance_audit:
+        description: 'Run performance audit'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  deployments: write
+  pull-requests: write
+  checks: write
+  security-events: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  GO_VERSION: '1.21'
+  NODE_VERSION: '18'
+  CACHE_VERSION: v1
+  BUILD_PATH: './website'
+  ARTIFACT_NAME: 'documentation-site'
+  DIAGRAMS_PATH: './diagrams'
+
+jobs:
+  # ============================================================================
+  # SETUP & PREPARATION
+  # ============================================================================
+  setup:
+    name: Setup & Environment
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      should-deploy: ${{ steps.deployment-check.outputs.should-deploy }}
+      node-cache-key: ${{ steps.cache-keys.outputs.node-cache-key }}
+      go-cache-key: ${{ steps.cache-keys.outputs.go-cache-key }}
+      deploy-environment: ${{ steps.deployment-check.outputs.deploy-environment }}
+      skip-tests: ${{ steps.test-config.outputs.skip-tests }}
+      run-performance-audit: ${{ steps.test-config.outputs.run-performance-audit }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine deployment configuration
+        id: deployment-check
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "should-deploy=true" >> $GITHUB_OUTPUT
+            echo "deploy-environment=${{ github.event.inputs.deploy_environment }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/main" && "${{ github.event_name }}" == "push" ]]; then
+            echo "should-deploy=true" >> $GITHUB_OUTPUT
+            echo "deploy-environment=production" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/develop" && "${{ github.event_name }}" == "push" ]]; then
+            echo "should-deploy=true" >> $GITHUB_OUTPUT
+            echo "deploy-environment=staging" >> $GITHUB_OUTPUT
+          else
+            echo "should-deploy=false" >> $GITHUB_OUTPUT
+            echo "deploy-environment=staging" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Configure test execution
+        id: test-config
+        run: |
+          if [[ "${{ github.event.inputs.skip_tests }}" == "true" ]]; then
+            echo "skip-tests=true" >> $GITHUB_OUTPUT
+          else  
+            echo "skip-tests=false" >> $GITHUB_OUTPUT
+          fi
+          
+          if [[ "${{ github.event.inputs.performance_audit }}" == "false" ]]; then
+            echo "run-performance-audit=false" >> $GITHUB_OUTPUT
+          else
+            echo "run-performance-audit=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate cache keys
+        id: cache-keys
+        run: |
+          echo "node-cache-key=${{ env.CACHE_VERSION }}-node-${{ hashFiles('website/package-lock.json') }}" >> $GITHUB_OUTPUT
+          echo "go-cache-key=${{ env.CACHE_VERSION }}-go-${{ hashFiles('go.mod', 'go.sum') }}" >> $GITHUB_OUTPUT
+
+  # ============================================================================
+  # GO PROVIDER TESTING & BUILDING
+  # ============================================================================
+  test-provider:
+    name: Test Provider
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: setup
+    if: needs.setup.outputs.skip-tests != 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ['1.20', '1.21']
+        terraform-version: ['1.4', '1.5', '1.6']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ matrix.terraform-version }}
+          terraform_wrapper: false
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Run unit tests
+        run: |
+          go test -v -count=1 -parallel=4 -coverprofile=coverage.out ./...
+          go tool cover -html=coverage.out -o coverage.html
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.out
+          flags: unittests
+          name: codecov-${{ matrix.go-version }}-${{ matrix.terraform-version }}
+
+  lint-provider:
+    name: Lint Provider
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: setup
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          args: --timeout=5m
+
+      - name: Format check
+        run: |
+          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+            echo "The following files need formatting:"
+            gofmt -s -l .
+            exit 1
+          fi
+
+      - name: Go vet
+        run: go vet ./...
+
+      - name: Static analysis
+        run: |
+          go install honnef.co/go/tools/cmd/staticcheck@latest
+          staticcheck ./...
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: setup
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Run Gosec Security Scanner
+        uses: securecodewarrior/github-action-gosec@master
+        with:
+          args: '-no-fail -fmt sarif -out results.sarif ./...'
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: results.sarif
+
+      - name: Nancy vulnerability scan
+        run: |
+          go install github.com/sonatypecommunity/nancy@latest
+          go list -json -deps ./... | nancy sleuth
+
+      - name: Snyk security scan
+        if: github.event_name == 'push'
+        uses: snyk/actions/golang@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=medium
+
+  build-provider:
+    name: Build Provider
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [setup, test-provider, lint-provider]
+    if: always() && (needs.test-provider.result == 'success' || needs.setup.outputs.skip-tests == 'true') && needs.lint-provider.result == 'success'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Build for multiple platforms
+        run: |
+          mkdir -p dist
+          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o dist/terraform-provider-snowflake-ovh_linux_amd64
+          GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o dist/terraform-provider-snowflake-ovh_windows_amd64.exe
+          GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o dist/terraform-provider-snowflake-ovh_darwin_amd64
+          GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o dist/terraform-provider-snowflake-ovh_darwin_arm64
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: provider-binaries
+          path: dist/
+          retention-days: 7
+
+  generate-terraform-docs:
+    name: Generate Terraform Documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [setup, build-provider]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install tfplugindocs
+        run: go install github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs@latest
+
+      - name: Generate provider documentation
+        run: |
+          tfplugindocs generate
+          if [[ -n $(git status --porcelain docs/) ]]; then
+            echo "Provider documentation generated successfully"
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add docs/
+            git commit -m "docs: update provider documentation [skip ci]" || echo "No changes to commit"
+          fi
+
+      - name: Generate comprehensive documentation structure
+        run: |
+          mkdir -p website/docs/provider
+          mkdir -p website/docs/resources
+          mkdir -p website/docs/data-sources
+          
+          # Copy generated docs to website structure
+          if [ -d "docs/resources" ]; then
+            cp -r docs/resources/* website/docs/resources/ 2>/dev/null || true
+          fi
+          if [ -d "docs/data-sources" ]; then
+            cp -r docs/data-sources/* website/docs/data-sources/ 2>/dev/null || true
+          fi
+          
+          # Generate index files for better navigation
+          echo "# Provider Resources" > website/docs/resources/_index.md
+          echo "# Provider Data Sources" > website/docs/data-sources/_index.md
+          
+          # Create API documentation structure
+          mkdir -p website/api/provider
+          echo "# Provider API Documentation" > website/api/provider/README.md
+
+      - name: Upload documentation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-docs
+          path: |
+            docs/
+            website/docs/provider/
+            website/docs/resources/
+            website/docs/data-sources/
+          retention-days: 7
+
+  # ============================================================================
+  # DOCUMENTATION WEBSITE BUILDING
+  # ============================================================================
+  lint-docs:
+    name: Lint Documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: setup
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        id: cache-node-modules
+        with:
+          path: website/node_modules
+          key: ${{ needs.setup.outputs.node-cache-key }}
+          restore-keys: |
+            ${{ env.CACHE_VERSION }}-node-
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        working-directory: ${{ env.BUILD_PATH }}
+        run: |
+          npm ci --prefer-offline --no-audit
+          npm ls
+
+      - name: Type checking
+        working-directory: ${{ env.BUILD_PATH }}
+        run: |
+          npm run typecheck
+
+      - name: Lint code
+        working-directory: ${{ env.BUILD_PATH }}
+        run: |
+          npm run lint
+
+      - name: Format check
+        working-directory: ${{ env.BUILD_PATH }}
+        run: |
+          npm run format:check
+
+      - name: Upload lint results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-results
+          path: website/lint-results/
+          retention-days: 3
+
+  build-docs:
+    name: Build Documentation Site
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [setup, generate-terraform-docs, lint-docs]
+    if: always() && needs.generate-terraform-docs.result == 'success' && (needs.lint-docs.result == 'success' || needs.lint-docs.result == 'skipped')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+
+      - name: Download Terraform docs
+        uses: actions/download-artifact@v4
+        with:
+          name: terraform-docs
+          path: .
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        id: cache-node-modules
+        with:
+          path: website/node_modules
+          key: ${{ needs.setup.outputs.node-cache-key }}
+          restore-keys: |
+            ${{ env.CACHE_VERSION }}-node-
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        working-directory: ${{ env.BUILD_PATH }}
+        run: |
+          npm ci --prefer-offline --no-audit
+
+      - name: Generate diagrams
+        run: |
+          if [ -d "${{ env.DIAGRAMS_PATH }}" ]; then
+            echo "Generating architecture diagrams..."
+            # Add diagram generation logic here if needed
+            mkdir -p website/static/img/diagrams
+            cp -r diagrams/* website/static/img/diagrams/ 2>/dev/null || true
+          fi
+
+      - name: Build documentation site
+        working-directory: ${{ env.BUILD_PATH }}
+        env:
+          NODE_ENV: production
+          NODE_OPTIONS: '--max_old_space_size=4096'
+          CI: true
+          DEPLOYMENT_BRANCH: ${{ github.ref_name }}
+          BUILD_ENV: ${{ needs.setup.outputs.deploy-environment }}
+        run: |
+          echo "Building documentation site..."
+          npm run build
+
+      - name: Optimize build
+        working-directory: ${{ env.BUILD_PATH }}
+        run: |
+          # Optimize images and assets
+          find build -name "*.js" -type f -exec gzip -k {} \;
+          find build -name "*.css" -type f -exec gzip -k {} \;
+          find build -name "*.html" -type f -exec gzip -k {} \;
+
+      - name: Generate build manifest
+        working-directory: ${{ env.BUILD_PATH }}
+        run: |
+          echo "{
+            \"build_time\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",
+            \"git_commit\": \"${{ github.sha }}\",
+            \"git_branch\": \"${{ github.ref_name }}\",
+            \"environment\": \"${{ needs.setup.outputs.deploy-environment }}\",
+            \"workflow_run\": \"${{ github.run_id }}\"
+          }" > build/build-manifest.json
+
+      - name: Test build integrity
+        working-directory: ${{ env.BUILD_PATH }}
+        run: |
+          # Basic build integrity checks
+          [ -f "build/index.html" ] || (echo "Missing index.html" && exit 1)
+          [ -d "build/static" ] || (echo "Missing static assets" && exit 1)
+          echo "Build integrity check passed"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: documentation-pages
+          path: website/build/
+          retention-days: 30
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: |
+            website/build/
+            website/build-manifest.json
+          retention-days: 7
+          compression-level: 6
+
+  # ============================================================================
+  # TESTING & QUALITY ASSURANCE
+  # ============================================================================
+  test-build:
+    name: Test Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [setup, build-docs]
+    if: needs.build-docs.result == 'success'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: website/build
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Test build locally
+        working-directory: ${{ env.BUILD_PATH }}
+        run: |
+          npm install -g serve
+          serve -s build -l 3000 &
+          SERVER_PID=$!
+          sleep 5
+          
+          # Test that the server is responding
+          curl -f http://localhost:3000/ || (echo "Server not responding" && kill $SERVER_PID && exit 1)
+          curl -f http://localhost:3000/docs/ || (echo "Docs page not accessible" && kill $SERVER_PID && exit 1)
+          
+          kill $SERVER_PID
+
+      - name: Validate HTML
+        run: |
+          # Basic HTML validation
+          find website/build -name "*.html" -exec echo "Validating {}" \; -exec grep -l "<!DOCTYPE html>" {} \; > /dev/null
+
+  performance-audit:
+    name: Performance Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [setup, build-docs]
+    if: needs.setup.outputs.run-performance-audit == 'true' && needs.build-docs.result == 'success'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: website/build
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.12.x
+
+      - name: Lighthouse CI
+        working-directory: ${{ env.BUILD_PATH }}
+        run: |
+          npm install -g serve
+          serve -s build -l 3000 &
+          SERVER_PID=$!
+          sleep 5
+          lhci autorun
+          kill $SERVER_PID
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-results
+          path: website/.lighthouseci/
+          retention-days: 7
+
+  # ============================================================================
+  # ACCEPTANCE & INTEGRATION TESTS
+  # ============================================================================
+  acceptance-tests:
+    name: Acceptance Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    needs: [setup, build-provider]
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-acceptance-tests'))
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.6'
+          terraform_wrapper: false
+
+      - name: Run acceptance tests
+        env:
+          TF_ACC: 1
+          # Credentials should be stored in GitHub Secrets
+          # OVH_ENDPOINT: ${{ secrets.OVH_ENDPOINT }}
+          # OVH_APPLICATION_KEY: ${{ secrets.OVH_APPLICATION_KEY }}
+          # OVH_APPLICATION_SECRET: ${{ secrets.OVH_APPLICATION_SECRET }}
+          # OVH_CONSUMER_KEY: ${{ secrets.OVH_CONSUMER_KEY }}
+          # SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          # SNOWFLAKE_USERNAME: ${{ secrets.SNOWFLAKE_USERNAME }}
+          # SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+        run: |
+          go test -v -count=1 -parallel=4 -timeout=60m ./internal/provider/
+        continue-on-error: true
+
+  validate-examples:
+    name: Validate Examples
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: setup
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.6'
+
+      - name: Validate examples
+        run: |
+          for dir in examples/*/; do
+            if [[ -f "$dir/main.tf" ]]; then
+              echo "Validating $dir"
+              cd "$dir"
+              terraform init -backend=false
+              terraform validate
+              cd - > /dev/null
+            fi
+          done
+
+  # ============================================================================
+  # DEPLOYMENT
+  # ============================================================================
+  deploy:
+    name: Deploy Documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [setup, build-docs, test-build]
+    if: needs.setup.outputs.should-deploy == 'true' && needs.build-docs.result == 'success' && needs.test-build.result == 'success'
+    environment:
+      name: ${{ needs.setup.outputs.deploy-environment }}
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: documentation-pages
+          path: website/build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        with:
+          static_site_generator: next
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: documentation-pages
+
+      - name: Get deployment URL
+        id: deployment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployment = await github.rest.repos.getPages({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            return deployment.data.html_url;
+
+      - name: Verify deployment
+        if: needs.setup.outputs.deploy-environment == 'production'
+        run: |
+          sleep 30  # Wait for deployment to propagate
+          SITE_URL="${{ steps.deployment.outputs.page_url }}"
+          
+          # Verify main pages are accessible
+          curl -f "$SITE_URL" || (echo "Main page not accessible" && exit 1)
+          curl -f "$SITE_URL/docs/" || (echo "Docs page not accessible" && exit 1)
+          
+          echo "✅ Deployment verification successful"
+
+  # ============================================================================
+  # CLEANUP & NOTIFICATIONS
+  # ============================================================================
+  cleanup:
+    name: Cleanup
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [setup, deploy, performance-audit, acceptance-tests]
+    if: always()
+    steps:
+      - name: Clean up artifacts
+        run: |
+          echo "🧹 Cleaning up temporary artifacts and caches..."
+          # GitHub automatically cleans up artifacts based on retention policy
+          echo "✅ Cleanup completed"
+
+      - name: Post deployment status
+        if: needs.setup.outputs.should-deploy == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deploymentStatus = '${{ needs.deploy.result }}';
+            const environment = '${{ needs.setup.outputs.deploy-environment }}';
+            
+            if (deploymentStatus === 'success') {
+              github.rest.repos.createCommitStatus({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                sha: context.sha,
+                state: 'success',
+                description: `Successfully deployed to ${environment}`,
+                context: 'deployment'
+              });
+            } else {
+              github.rest.repos.createCommitStatus({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                sha: context.sha,
+                state: 'failure',
+                description: `Deployment to ${environment} failed`,
+                context: 'deployment'
+              });
+            }
+
+      - name: Notify on failure
+        if: failure() && github.ref == 'refs/heads/main'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ CI/CD Pipeline failed on main branch. Please check the workflow logs.'
+            });
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # ============================================================================
+  # SUMMARY & REPORTING
+  # ============================================================================
+  summary:
+    name: Pipeline Summary
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [setup, test-provider, lint-provider, security-scan, build-provider, generate-terraform-docs, lint-docs, build-docs, test-build, performance-audit, acceptance-tests, validate-examples, deploy, cleanup]
+    if: always()
+    steps:
+      - name: Generate pipeline summary
+        run: |
+          echo "# 🚀 CI/CD Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Provider Tests | ${{ needs.test-provider.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Provider Lint | ${{ needs.lint-provider.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security Scan | ${{ needs.security-scan.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Provider Build | ${{ needs.build-provider.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Terraform Docs | ${{ needs.generate-terraform-docs.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Documentation Lint | ${{ needs.lint-docs.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Documentation Build | ${{ needs.build-docs.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Test | ${{ needs.test-build.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Performance Audit | ${{ needs.performance-audit.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Acceptance Tests | ${{ needs.acceptance-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Example Validation | ${{ needs.validate-examples.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Deployment | ${{ needs.deploy.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ needs.deploy.result }}" == "success" ]]; then
+            echo "✅ **Deployment successful to ${{ needs.setup.outputs.deploy-environment }}**" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY

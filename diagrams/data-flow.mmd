@@ -1,0 +1,58 @@
+flowchart TD
+    subgraph "Configuration Sources"
+        A[main.tf] --> E[Provider Config]
+        B[variables.tf] --> E
+        C[terraform.tfvars] --> E
+        D[Environment Variables] --> E
+    end
+    
+    subgraph "Provider Processing"
+        E --> F[Configuration Parser]
+        F --> G[Credential Manager]
+        G --> H[API Client Factory]
+        H --> I[Resource Manager]
+    end
+    
+    subgraph "API Operations"
+        I --> J[OVH API Calls]
+        I --> K[Snowflake API Calls]
+        J --> L[OVH Response Processing]
+        K --> M[Snowflake Response Processing]
+    end
+    
+    subgraph "State Management"
+        L --> N[State Reconciliation]
+        M --> N
+        N --> O[Terraform State Update]
+        O --> P[State Backend Sync]
+    end
+    
+    subgraph "Monitoring & Logging"
+        I --> Q[Metrics Collection]
+        J --> R[API Logging]
+        K --> R
+        Q --> S[Monitoring Dashboard]
+        R --> T[Audit Logs]
+    end
+    
+    subgraph "Error Handling"
+        J --> U[Error Detection]
+        K --> U
+        U --> V[Retry Logic]
+        V --> W[Error Reporting]
+        W --> X[User Feedback]
+    end
+    
+    classDef config fill:#f0f8ff,stroke:#333,stroke-width:1px
+    classDef provider fill:#00185c,stroke:#333,stroke-width:2px,color:#fff
+    classDef api fill:#29b5e8,stroke:#333,stroke-width:2px,color:#fff
+    classDef state fill:#00d4aa,stroke:#333,stroke-width:2px,color:#fff
+    classDef monitoring fill:#ff9800,stroke:#333,stroke-width:2px,color:#fff
+    classDef error fill:#f44336,stroke:#333,stroke-width:2px,color:#fff
+    
+    class A,B,C,D config
+    class E,F,G,H,I provider
+    class J,K,L,M api
+    class N,O,P state
+    class Q,R,S,T monitoring
+    class U,V,W,X error
