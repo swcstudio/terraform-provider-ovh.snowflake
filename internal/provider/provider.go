@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"database/sql"
 
 	"os"
 
@@ -12,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"github.com/ovh/go-ovh/ovh"
 )
 
 var _ provider.Provider = &SnowflakeOVHProvider{}
@@ -32,11 +30,6 @@ type SnowflakeOVHProviderModel struct {
 	SnowflakePrivateKey  types.String `tfsdk:"snowflake_private_key"`
 	SnowflakeRole        types.String `tfsdk:"snowflake_role"`
 	SnowflakeWarehouse   types.String `tfsdk:"snowflake_warehouse"`
-}
-
-type Config struct {
-	OVHClient       *ovh.Client
-	SnowflakeClient *sql.DB
 }
 
 func (p *SnowflakeOVHProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -198,25 +191,23 @@ func (p *SnowflakeOVHProvider) Configure(ctx context.Context, req provider.Confi
 	ctx = tflog.MaskFieldValuesWithFieldKeys(ctx, "snowflake_password")
 	ctx = tflog.MaskFieldValuesWithFieldKeys(ctx, "snowflake_private_key")
 
-	tflog.Debug(ctx, "Creating OVH client")
+	tflog.Debug(ctx, "Configuring provider clients")
 
-	ovhClient, err := ovh.NewClient(ovhEndpoint, ovhApplicationKey, ovhApplicationSecret, ovhConsumerKey)
-	if err != nil {
+	client := NewConfig()
+	if err := client.LoadConfiguration(ctx, &config); err != nil {
 		resp.Diagnostics.AddError(
-			"Unable to create OVH client",
-			"Unable to create OVH client:\n\n"+err.Error(),
+			"Failed to configure provider",
+			"Failed to load provider configuration:\n\n"+err.Error(),
 		)
 		return
 	}
 
-	var snowflakeClient *sql.DB
-	if snowflakeAccount != "" && snowflakeUser != "" {
-		tflog.Debug(ctx, "Snowflake client creation skipped in test environment")
-	}
-
-	client := &Config{
-		OVHClient:       ovhClient,
-		SnowflakeClient: snowflakeClient,
+	if err := client.ValidateConfiguration(ctx); err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to validate provider configuration",
+			"Provider configuration validation failed:\n\n"+err.Error(),
+		)
+		return
 	}
 
 	resp.DataSourceData = client

@@ -1,84 +1,81 @@
 {
-  "version": 1,
-  "metadata": {
-    "protocol_versions": ["5.0", "6.0"],
-    "provider": {
-      "name": "snowflake",
-      "namespace": "ovh",
-      "version": "0.1.0",
-      "description": "OVH Snowflake Terraform Provider - Manage Snowflake resources through OVH infrastructure",
-      "published_at": "2024-01-01T00:00:00Z",
-      "source": "https://github.com/ovh/terraform-provider-ovh-snowflake",
-      "tag": "v0.1.0"
-    }
-  },
-  "platforms": [
-    {
-      "os": "linux",
-      "arch": "amd64"
-    },
-    {
-      "os": "linux",
-      "arch": "arm64"
-    },
-    {
-      "os": "darwin",
-      "arch": "amd64"
-    },
-    {
-      "os": "darwin",
-      "arch": "arm64"
-    },
-    {
-      "os": "windows",
-      "arch": "amd64"
-    },
-    {
-      "os": "windows",
-      "arch": "arm64"
-    }
-  ],
-  "protocols": [
-    "5.0",
-    "6.0"
-  ],
-  "signing_keys": {
-    "gpg_public_keys": [
-      {
-        "key_id": "your-gpg-key-id",
-        "ascii_armor": "-----BEGIN PGP PUBLIC KEY BLOCK-----\n\n[Your GPG public key content here]\n\n-----END PGP PUBLIC KEY BLOCK-----",
-        "trust_signature": "",
-        "source": "HashiCorp",
-        "source_url": "https://www.hashicorp.com/security"
-      }
-    ]
-  },
-  "docs": {
-    "process_docs": true,
-    "allowed_resource_subcategories": [
-      "Account",
-      "Database", 
-      "Schema",
-      "Table",
-      "User",
-      "Role",
-      "Warehouse",
-      "Resource Monitor",
-      "Share",
-      "Security"
-    ],
-    "allowed_data_source_subcategories": [
-      "Account",
-      "Database",
-      "Schema", 
-      "Table",
-      "User",
-      "Role",
-      "Warehouse",
-      "Security"
-    ]
-  },
-  "repo": "https://github.com/ovh/terraform-provider-ovh-snowflake",
-  "clone_url": "https://github.com/ovh/terraform-provider-ovh-snowflake.git",
-  "tag": "v0.1.0"
+	"version": 1,
+	"metadata": {
+		"protocol_versions": ["5.0", "6.0"],
+		"provider": {
+			"name": "snowflake",
+			"namespace": "swcstudio",
+			"version": "0.1.0",
+			"description": "OVH Snowflake Terraform Provider - Manage Snowflake resources through OVH infrastructure",
+			"published_at": "2024-01-01T00:00:00Z",
+			"source": "https://github.com/swcstudio/terraform-provider-ovh.snowflake",
+			"tag": "v0.1.0"
+		}
+	},
+	"platforms": [
+		{
+			"os": "linux",
+			"arch": "amd64"
+		},
+		{
+			"os": "linux",
+			"arch": "arm64"
+		},
+		{
+			"os": "darwin",
+			"arch": "amd64"
+		},
+		{
+			"os": "darwin",
+			"arch": "arm64"
+		},
+		{
+			"os": "windows",
+			"arch": "amd64"
+		},
+		{
+			"os": "windows",
+			"arch": "arm64"
+		}
+	],
+	"protocols": ["5.0", "6.0"],
+	"signing_keys": {
+		"gpg_public_keys": [
+			{
+				"key_id": "your-gpg-key-id",
+				"ascii_armor": "-----BEGIN PGP PUBLIC KEY BLOCK-----\n\n[Your GPG public key content here]\n\n-----END PGP PUBLIC KEY BLOCK-----",
+				"trust_signature": "",
+				"source": "HashiCorp",
+				"source_url": "https://www.hashicorp.com/security"
+			}
+		]
+	},
+	"docs": {
+		"process_docs": true,
+		"allowed_resource_subcategories": [
+			"Account",
+			"Database",
+			"Schema",
+			"Table",
+			"User",
+			"Role",
+			"Warehouse",
+			"Resource Monitor",
+			"Share",
+			"Security"
+		],
+		"allowed_data_source_subcategories": [
+			"Account",
+			"Database",
+			"Schema",
+			"Table",
+			"User",
+			"Role",
+			"Warehouse",
+			"Security"
+		]
+	},
+	"repo": "https://github.com/swcstudio/terraform-provider-ovh.snowflake",
+	"clone_url": "https://github.com/swcstudio/terraform-provider-ovh.snowflake.git",
+	"tag": "v0.1.0"
 }

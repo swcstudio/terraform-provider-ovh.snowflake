@@ -84,8 +84,10 @@ func dataSourceSnowflakeAccounts() *schema.Resource {
 }
 
 func dataSourceSnowflakeAccountsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	config := meta.(*Config)
-	_ = diag.Diagnostics{}
+	config, ok := meta.(*Config)
+	if !ok {
+		return diag.Errorf("unexpected meta type: %T", meta)
+	}
 
 	var accounts []map[string]interface{}
 	err := config.OVHClient.Get("/cloud/project/snowflake/account", &accounts)
@@ -93,16 +95,28 @@ func dataSourceSnowflakeAccountsRead(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(fmt.Errorf("failed to read Snowflake accounts: %w", err))
 	}
 
-	region := d.Get("region").(string)
-	status := d.Get("status").(string)
+	region, ok := d.Get("region").(string)
+	if !ok {
+		region = ""
+	}
+	status, ok := d.Get("status").(string)
+	if !ok {
+		status = ""
+	}
 
-	var filteredAccounts []map[string]interface{}
+	filteredAccounts := make([]map[string]interface{}, 0, len(accounts))
 	for _, account := range accounts {
-		if region != "" && account["region"].(string) != region {
-			continue
+		if region != "" {
+			accountRegion, ok := account["region"].(string)
+			if !ok || accountRegion != region {
+				continue
+			}
 		}
-		if status != "" && account["status"].(string) != status {
-			continue
+		if status != "" {
+			accountStatus, ok := account["status"].(string)
+			if !ok || accountStatus != status {
+				continue
+			}
 		}
 		filteredAccounts = append(filteredAccounts, account)
 	}
@@ -126,7 +140,9 @@ func dataSourceSnowflakeAccountsRead(ctx context.Context, d *schema.ResourceData
 		accountList[i] = accountMap
 	}
 
-	d.Set("accounts", accountList)
+	if err := d.Set("accounts", accountList); err != nil {
+		return diag.FromErr(fmt.Errorf("failed to set accounts: %w", err))
+	}
 	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
 
 	return nil
