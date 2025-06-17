@@ -15,7 +15,7 @@ func TestAccSnowflakeOVHWarehouse_basic(t *testing.T) {
 	}
 
 	warehouseName := "test_warehouse_basic"
-	
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -43,7 +43,7 @@ func TestAccSnowflakeOVHWarehouse_update(t *testing.T) {
 	}
 
 	warehouseName := "test_warehouse_update"
-	
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -76,7 +76,7 @@ func TestAccSnowflakeOVHWarehouse_withOVHFeatures(t *testing.T) {
 	}
 
 	warehouseName := "test_warehouse_ovh_features"
-	
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -128,7 +128,7 @@ func TestAccSnowflakeOVHWarehouse_duplicateName(t *testing.T) {
 	}
 
 	warehouseName := "test_warehouse_duplicate"
-	
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -154,7 +154,7 @@ func TestAccSnowflakeOVHWarehouse_import(t *testing.T) {
 	}
 
 	warehouseName := "test_warehouse_import"
-	
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -184,7 +184,7 @@ func TestAccSnowflakeOVHWarehouse_tags(t *testing.T) {
 	}
 
 	warehouseName := "test_warehouse_tags"
-	
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -210,7 +210,7 @@ func TestAccSnowflakeOVHWarehouse_disappears(t *testing.T) {
 	}
 
 	warehouseName := "test_warehouse_disappears"
-	
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -374,19 +374,19 @@ func isValidWarehouseName(name string) bool {
 	if len(name) == 0 || len(name) > 64 {
 		return false
 	}
-	
+
 	// Check if name starts with a letter or underscore
 	if !((name[0] >= 'a' && name[0] <= 'z') || (name[0] >= 'A' && name[0] <= 'Z') || name[0] == '_') {
 		return false
 	}
-	
+
 	// Check that all characters are alphanumeric or underscore
 	for _, char := range name {
 		if !((char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z') || (char >= '0' && char <= '9') || char == '_') {
 			return false
 		}
 	}
-	
+
 	return true
 }
 

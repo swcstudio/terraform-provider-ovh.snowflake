@@ -27,7 +27,7 @@ func TestProvider(t *testing.T) {
 
 func TestProvider_Schema(t *testing.T) {
 	provider := New("test")()
-	
+
 	// Test that the provider can be instantiated
 	if provider == nil {
 		t.Fatal("Provider should not be nil")
@@ -36,7 +36,7 @@ func TestProvider_Schema(t *testing.T) {
 
 func TestProvider_Metadata(t *testing.T) {
 	provider := New("test")()
-	
+
 	// Basic validation that provider can be created
 	if provider == nil {
 		t.Fatal("Provider should not be nil")
@@ -45,29 +45,29 @@ func TestProvider_Metadata(t *testing.T) {
 
 func TestProvider_Resources(t *testing.T) {
 	provider := New("test")()
-	
+
 	// Test that resources method can be called
 	resources := provider.Resources(nil)
-	
+
 	// Just verify we get a slice back - the actual resources may not be implemented yet
 	if resources == nil {
 		t.Error("Resources should return a non-nil slice")
 	}
-	
+
 	t.Logf("Provider registered %d resource types", len(resources))
 }
 
 func TestProvider_DataSources(t *testing.T) {
 	provider := New("test")()
-	
+
 	// Test that data sources method can be called
 	dataSources := provider.DataSources(nil)
-	
+
 	// Just verify we get a slice back - the actual data sources may not be implemented yet
 	if dataSources == nil {
 		t.Error("DataSources should return a non-nil slice")
 	}
-	
+
 	t.Logf("Provider registered %d data source types", len(dataSources))
 }
 
@@ -98,12 +98,12 @@ func TestAccProvider_WithConfiguration(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping acceptance test in short mode")
 	}
-	
+
 	// Skip if we don't have test credentials
 	if os.Getenv("OVH_APPLICATION_KEY") == "" {
 		t.Skip("OVH_APPLICATION_KEY not set, skipping acceptance test")
 	}
-	
+
 	resource.Test(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -150,24 +150,24 @@ func testAccPreCheck(t *testing.T) {
 	// Check required environment variables for acceptance tests
 	requiredEnvVars := []string{
 		"OVH_ENDPOINT",
-		"OVH_APPLICATION_KEY", 
+		"OVH_APPLICATION_KEY",
 		"OVH_APPLICATION_SECRET",
 		"OVH_CONSUMER_KEY",
 	}
-	
+
 	for _, envVar := range requiredEnvVars {
 		if v := os.Getenv(envVar); v == "" {
 			t.Fatalf("%s must be set for acceptance tests", envVar)
 		}
 	}
-	
+
 	// Optional Snowflake credentials check
 	snowflakeVars := []string{
 		"SNOWFLAKE_ACCOUNT",
-		"SNOWFLAKE_USERNAME", 
+		"SNOWFLAKE_USERNAME",
 		"SNOWFLAKE_PASSWORD",
 	}
-	
+
 	hasSnowflakeVars := true
 	for _, envVar := range snowflakeVars {
 		if v := os.Getenv(envVar); v == "" {
@@ -175,7 +175,7 @@ func testAccPreCheck(t *testing.T) {
 			break
 		}
 	}
-	
+
 	if !hasSnowflakeVars {
 		t.Log("Snowflake credentials not set, some tests may be skipped")
 	}
@@ -186,7 +186,7 @@ func TestProvider_ConcurrentAccess(t *testing.T) {
 	// Test that provider can handle concurrent instantiation
 	const goroutines = 10
 	done := make(chan bool, goroutines)
-	
+
 	for i := 0; i < goroutines; i++ {
 		go func() {
 			defer func() { done <- true }()
@@ -196,7 +196,7 @@ func TestProvider_ConcurrentAccess(t *testing.T) {
 			}
 		}()
 	}
-	
+
 	// Wait for all goroutines to complete
 	for i := 0; i < goroutines; i++ {
 		<-done
@@ -216,13 +216,13 @@ func TestProvider_EnvironmentVariables(t *testing.T) {
 		"SNOWFLAKE_USERNAME":     "test-user",
 		"SNOWFLAKE_PASSWORD":     "test-password",
 	}
-	
+
 	// Save original values and set test values
 	for key, value := range testVars {
 		originalVars[key] = os.Getenv(key)
 		os.Setenv(key, value)
 	}
-	
+
 	// Restore original values after test
 	defer func() {
 		for key, originalValue := range originalVars {
@@ -233,7 +233,7 @@ func TestProvider_EnvironmentVariables(t *testing.T) {
 			}
 		}
 	}()
-	
+
 	// Test provider creation with environment variables
 	provider := New("test")()
 	if provider == nil {
@@ -247,7 +247,7 @@ func TestProvider_Version(t *testing.T) {
 	if provider == nil {
 		t.Fatal("Provider should not be nil")
 	}
-	
+
 	// Test with development version
 	devProvider := New("dev")()
 	if devProvider == nil {
@@ -274,7 +274,7 @@ func TestProvider_VersionHandling(t *testing.T) {
 		"test",
 		"",
 	}
-	
+
 	for _, version := range testVersions {
 		t.Run("version_"+version, func(t *testing.T) {
 			provider := New(version)()
